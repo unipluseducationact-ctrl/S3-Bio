@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Study Flashcards | Ch 3 Membrane Transport</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        background: "#f7f9fb", secondary: "#006d37", primary: "#004e9f",
+        "outline-variant": "#c1c6d5", "on-secondary": "#ffffff",
+        "tertiary-container": "#c9242c", "surface-dim": "#d8dadc",
+        "primary-fixed": "#d7e3ff", "on-background": "#191c1e",
+        surface: "#f7f9fb", "on-surface-variant": "#414753",
+        "on-surface": "#191c1e", "surface-container-low": "#f2f4f6",
+        "surface-container-lowest": "#ffffff", "surface-container-high": "#e6e8ea",
+        "on-primary": "#ffffff", error: "#ba1a1a", tertiary: "#a50018",
+        "primary-container": "#0066cc", "error-container": "#ffdad6",
+        outline: "#727784", "surface-container": "#eceef0",
+        "secondary-container": "#6bfe9c", "on-secondary-container": "#00743a"
+      },
+      borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      spacing: { "container-max": "1200px" },
+      fontFamily: {
+        "headline-xl": ["Inter", "sans-serif"], "body-md": ["Inter", "sans-serif"],
+        "label-code": ["SF Mono", "Monaco", "Consolas", "monospace"],
+        "headline-lg-mobile": ["Inter", "sans-serif"], "headline-lg": ["Inter", "sans-serif"],
+        "label-bold": ["Inter", "sans-serif"], "body-sm": ["Inter", "sans-serif"]
+      },
+      fontSize: {
+        "headline-xl": ["40px", { lineHeight: "52px", letterSpacing: "-0.02em", fontWeight: "800" }],
+        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+        "label-code": ["13px", { lineHeight: "16px", fontWeight: "500" }],
+        "headline-lg-mobile": ["24px", { lineHeight: "32px", fontWeight: "700" }],
+        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+        "label-bold": ["14px", { lineHeight: "18px", fontWeight: "600" }],
+        "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }]
+      }
+    }
+  }
+};
+</script>
+<style>
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+canvas#particle-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.35; }
+.perspective-1000 { perspective: 1000px; }
+.card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1); transform-style: preserve-3d; }
+.card-flipped .card-inner { transform: rotateY(180deg); }
+.card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; border-radius: 1.5rem; }
+.card-back { transform: rotateY(180deg); }
+.card-back-text { font-size: clamp(1.2rem, 2.8vw, 1.55rem); line-height: 1.55; font-weight: 500; }
+.card-back-text strong { font-weight: 700; color: #004e9f; }
+.card-back-image { width: 100%; max-height: 140px; object-fit: contain; border-radius: 0.75rem; margin-top: 0.75rem; border: 1px solid rgba(0, 78, 159, 0.12); background: #f2f4f6; }
+.fc-summary-wrap { max-width: 42rem; margin: 0 auto 2rem; }
+.fc-summary-wrap[hidden], #study-panel[hidden] { display: none !important; }
+.rating-hint { font-size: 0.8rem; color: #727784; text-align: center; max-width: 28rem; margin: 0.5rem auto 0; }
+.rating-hint.warn { color: #a50018; }
+.magnet-btn { transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1); }
+.proximity-stack .card-layer { transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+.filter-chip.active { background: #0066cc; color: #fff; border-color: transparent; }
+.fc-mode-toggle { display: inline-flex; padding: 3px; border-radius: 999px; background: #eceef0; border: 1px solid rgba(193, 198, 213, 0.6); gap: 2px; }
+.fc-mode-toggle button { border: none; background: transparent; padding: 6px 14px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; color: #414753; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.fc-mode-toggle button.active { background: #fff; color: #004e9f; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
+.fc-mode-toggle button:focus-visible { outline: 2px solid #004e9f; outline-offset: 2px; }
+.fc-nav-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+</style>
+<link href="./embed.css" rel="stylesheet"/>
+<script src="./embed.js"></script>
+<link href="./draw-tool.css" rel="stylesheet"/>
+<script src="./draw-tool.js" defer></script>
+<script
+  src="./tool-back.js"
+  data-hub="./flashcards.html"
+  data-back-en="Back to flashcards"
+  data-back-zh="返回闪卡"
+  data-back-zh-hant="返回閃卡"
+></script>
+</head>
+<body class="bg-background font-body-md text-on-surface overflow-x-hidden min-h-screen">
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+<main class="relative z-10 max-w-container-max mx-auto px-4 sm:px-6 py-6 md:py-10 pb-16">
+<header class="mb-8">
+<div class="flex flex-wrap gap-2 mb-3" id="tag-row"></div>
+<h1 class="font-headline-xl text-headline-xl text-primary mb-2">Ch 3 Membrane Transport</h1>
+<p class="text-on-surface-variant max-w-2xl mb-4" id="study-subtitle">Flashcard study</p>
+<div class="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+<div class="flex flex-wrap gap-2" id="filter-row" role="tablist" aria-label="Filter by subtopic"></div>
+<div class="flex flex-wrap gap-3 items-center">
+<div class="flex flex-col gap-1" role="group" aria-labelledby="mode-toggle-label">
+<span class="text-on-surface-variant text-body-sm font-label-bold" id="mode-toggle-label">Study mode</span>
+<div class="fc-mode-toggle" id="mode-toggle">
+<button type="button" class="active" data-mode="sequence" id="mode-seq-btn">Sequence</button>
+<button type="button" data-mode="random" id="mode-rnd-btn">Random</button>
+</div>
+</div>
+<div class="bg-primary/10 px-4 py-2 rounded-2xl text-primary font-label-bold text-body-sm" id="round-badge">Round 1</div>
+<div class="bg-surface-container-high px-5 py-2.5 rounded-2xl shadow-sm inline-flex items-center gap-2">
+<span class="text-on-surface-variant text-body-sm font-label-bold">Progress</span>
+<span class="text-headline-lg-mobile font-headline-lg text-primary" id="card-counter">1 / 35</span>
+</div>
+</div>
+</div>
+</header>
+
+<div class="fc-summary-wrap" id="summary-wrap" hidden>
+<div id="summary-panel"></div>
+</div>
+
+<div id="study-panel">
+<div class="relative flex justify-center items-center min-h-[420px] h-[min(520px,70vh)] perspective-1000 proximity-stack mb-4" id="card-container">
+<div class="card-layer absolute w-full max-w-2xl h-[min(400px,65vh)] bg-surface-container-low rounded-[1.5rem] shadow-sm border border-outline-variant/10 translate-y-8 scale-[0.9] opacity-40 z-0"></div>
+<div class="card-layer absolute w-full max-w-2xl h-[min(400px,65vh)] bg-surface-container rounded-[1.5rem] shadow-md border border-outline-variant/20 translate-y-4 scale-[0.95] opacity-70 z-10"></div>
+<div class="relative w-full max-w-2xl h-[min(400px,65vh)] z-20 group cursor-pointer" id="main-card">
+<div class="card-inner" id="card-inner">
+<div class="card-face card-front bg-surface-container-lowest shadow-xl border border-outline-variant/30 p-8 sm:p-10 justify-center text-center">
+<div class="absolute top-5 left-5 right-5 flex flex-wrap justify-between gap-2">
+<span class="px-3 py-1 rounded-full border border-primary/20 text-primary font-label-bold text-body-sm" id="card-subtopic-front">Subtopic</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-low text-on-surface-variant font-label-code text-label-code" id="card-num-front">#1</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile sm:text-headline-lg text-on-surface leading-snug mt-10 px-2" id="card-front-text"></h2>
+<p class="text-on-surface-variant font-body-sm mt-4">Tap, space, or FLIP to reveal answer</p>
+</div>
+<div class="card-face card-back bg-white shadow-xl border border-primary/20 p-6 sm:p-8 justify-start overflow-y-auto">
+<div class="absolute top-5 left-5 right-5 flex flex-wrap justify-between gap-2">
+<span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-bold text-body-sm" id="card-subtopic-back">Subtopic</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-low text-on-surface-variant font-label-code text-label-code" id="card-num-back">#1</span>
+</div>
+<div class="mt-12 space-y-3">
+<p class="card-back-text text-on-surface" id="card-back-text"></p>
+<img class="card-back-image hidden" id="card-back-image" alt="" loading="lazy" decoding="async"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class="rating-hint" id="rating-hint"></p>
+<div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 mt-2">
+<button type="button" class="fc-nav-btn magnet-btn flex items-center gap-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low font-label-bold text-primary" id="prev-btn" aria-label="Previous card">
+<span class="material-symbols-outlined">chevron_left</span><span id="prev-label">Prev</span>
+</button>
+<button type="button" class="magnet-btn group flex flex-col items-center gap-1 p-3 rounded-full" id="again-btn">
+<div class="w-14 h-14 rounded-full bg-error-container text-on-error-container flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[28px]">history</span>
+</div>
+<span class="font-label-bold text-body-sm text-on-surface-variant">Again</span>
+</button>
+<button type="button" class="magnet-btn group flex flex-col items-center gap-1 p-4 rounded-full" id="flip-btn">
+<div class="w-20 h-20 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[40px]">sync</span>
+</div>
+<span class="font-label-bold text-primary">FLIP</span>
+</button>
+<button type="button" class="magnet-btn group flex flex-col items-center gap-1 p-3 rounded-full" id="easy-btn">
+<div class="w-14 h-14 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-[28px]">check</span>
+</div>
+<span class="font-label-bold text-body-sm text-on-surface-variant">Got it</span>
+</button>
+<button type="button" class="fc-nav-btn magnet-btn flex items-center gap-1 px-4 py-2.5 rounded-xl border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low font-label-bold text-primary" id="next-btn" aria-label="Next card">
+<span id="next-label">Next</span><span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+
+<script type="module">
+import { FLASHCARD_DECK, FLASHCARD_TAGS } from "./js/flashcardData.js";
+import {
+  t,
+  createCardStates,
+  buildRoundQueue,
+  orderQueueFromCopyPlan,
+  applyAgain,
+  applyGotIt,
+  applyNeutral,
+  resetRoundStats,
+  renderRoundSummary,
+} from "./js/flashcardSession.js";
+
+const params = new URLSearchParams(window.location.search);
+let studyMode = params.get("mode") === "random" ? "random" : "sequence";
+
+const mainCard = document.getElementById("main-card");
+const flipBtn = document.getElementById("flip-btn");
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+const againBtn = document.getElementById("again-btn");
+const easyBtn = document.getElementById("easy-btn");
+const prevLabel = document.getElementById("prev-label");
+const nextLabel = document.getElementById("next-label");
+const counterEl = document.getElementById("card-counter");
+const modeToggle = document.getElementById("mode-toggle");
+const modeToggleLabel = document.getElementById("mode-toggle-label");
+const modeSeqBtn = document.getElementById("mode-seq-btn");
+const modeRndBtn = document.getElementById("mode-rnd-btn");
+const roundBadge = document.getElementById("round-badge");
+const filterRow = document.getElementById("filter-row");
+const tagRow = document.getElementById("tag-row");
+const studyPanel = document.getElementById("study-panel");
+const summaryWrap = document.getElementById("summary-wrap");
+const summaryPanel = document.getElementById("summary-panel");
+const ratingHint = document.getElementById("rating-hint");
+
+const SUBTOPICS = [...new Set(FLASHCARD_DECK.map((c) => c.subtopic))];
+const cardById = new Map(FLASHCARD_DECK.map((c) => [c.id, c]));
+
+let lang = "en";
+let activeFilter = "all";
+let deck = [...FLASHCARD_DECK];
+let cardStates = createCardStates(deck);
+let roundNum = 1;
+let roundQueue = [];
+/** Frozen copy counts for this round — mode toggle only reorders. */
+let roundCopyPlan = null;
+let queueIndex = 0;
+let hasFlippedCurrent = false;
+let roundGotIt = 0;
+let roundAgain = 0;
+let roundNeutral = 0;
+let view = "study";
+
+function resolveLang() {
+  try {
+    const parentLang = window.parent.document.documentElement.lang;
+    if (parentLang && ["en", "zh", "zh-Hant"].includes(parentLang)) return parentLang;
+  } catch (_) { /* */ }
+  return "en";
+}
+
+function buildTags() {
+  tagRow.innerHTML = FLASHCARD_TAGS.map(
+    (tag) => `<span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-bold text-body-sm">#${tag}</span>`
+  ).join("");
+}
+
+function buildFilters() {
+  const chips = [{ id: "all", label: "All cards" }, ...SUBTOPICS.map((s) => ({ id: s, label: s }))];
+  filterRow.innerHTML = chips
+    .map(
+      (c) =>
+        `<button type="button" class="filter-chip px-3 py-1.5 rounded-full border border-outline-variant/40 text-body-sm font-label-bold text-on-surface-variant hover:border-primary/40 transition-colors${c.id === activeFilter ? " active" : ""}" data-filter="${c.id.replace(/&/g, "&amp;").replace(/"/g, "&quot;")}">${c.label}</button>`
+    )
+    .join("");
+  filterRow.querySelectorAll(".filter-chip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      activeFilter = btn.dataset.filter;
+      deck = activeFilter === "all" ? [...FLASHCARD_DECK] : FLASHCARD_DECK.filter((c) => c.subtopic === activeFilter);
+      startNewSession();
+      buildFilters();
+    });
+  });
+}
+
+function updateModeToggle() {
+  modeToggleLabel.textContent = t(lang, "modeToggleLabel");
+  modeSeqBtn.textContent = t(lang, "modeSequence");
+  modeRndBtn.textContent = t(lang, "modeRandom");
+  modeSeqBtn.classList.toggle("active", studyMode === "sequence");
+  modeRndBtn.classList.toggle("active", studyMode === "random");
+  modeSeqBtn.setAttribute("aria-pressed", studyMode === "sequence" ? "true" : "false");
+  modeRndBtn.setAttribute("aria-pressed", studyMode === "random" ? "true" : "false");
+}
+
+function setStudyMode(mode) {
+  if (mode !== "sequence" && mode !== "random") return;
+  if (mode === studyMode) return;
+  studyMode = mode;
+  updateModeToggle();
+  if (!roundCopyPlan) return;
+
+  roundQueue = orderQueueFromCopyPlan(roundCopyPlan, deck, studyMode);
+  queueIndex = 0;
+  mainCard.classList.remove("card-flipped");
+  hasFlippedCurrent = false;
+
+  if (view === "study") {
+    studyPanel.hidden = false;
+    summaryWrap.hidden = true;
+    renderCard();
+    updateRatingHint();
+  }
+  updateRoundBadge();
+}
+
+function resetFlashcardSession() {
+  activeFilter = "all";
+  deck = [...FLASHCARD_DECK];
+  buildFilters();
+  startNewSession();
+}
+
+function startNewSession() {
+  cardStates = createCardStates(deck);
+  roundNum = 1;
+  startRound();
+}
+
+function startRound() {
+  resetRoundStats(cardStates);
+  roundGotIt = 0;
+  roundAgain = 0;
+  roundNeutral = 0;
+  const { queue, copyPlan, mastered } = buildRoundQueue(
+    cardStates,
+    deck,
+    studyMode,
+    roundNum
+  );
+  if (mastered) {
+    showSummary(true);
+    return;
+  }
+  roundCopyPlan = copyPlan;
+  roundQueue = queue;
+  queueIndex = 0;
+  view = "study";
+  summaryWrap.hidden = true;
+  studyPanel.hidden = false;
+  updateModeToggle();
+  updateRoundBadge();
+  renderCard();
+  updateRatingHint();
+}
+
+function updateRoundBadge() {
+  const n = roundQueue.length;
+  if (lang === "zh" || lang === "zh-Hant") {
+    roundBadge.textContent = `第 ${roundNum} 轮 · ${n} 张`;
+  } else {
+    roundBadge.textContent = `Round ${roundNum} · ${n} cards`;
+  }
+}
+
+function updateNavLabels() {
+  prevLabel.textContent = t(lang, "prev");
+  nextLabel.textContent = t(lang, "next");
+}
+
+function updateNavButtons() {
+  prevBtn.disabled = queueIndex <= 0;
+  nextBtn.disabled = queueIndex >= roundQueue.length - 1;
+}
+
+function updateRatingHint() {
+  if (view !== "study") {
+    ratingHint.hidden = true;
+    return;
+  }
+  if (!hasFlippedCurrent) {
+    ratingHint.hidden = false;
+    ratingHint.textContent = t(lang, "flipFirst");
+    ratingHint.classList.add("warn");
+  } else {
+    ratingHint.hidden = true;
+    ratingHint.textContent = "";
+    ratingHint.classList.remove("warn");
+  }
+}
+
+function currentCard() {
+  return cardById.get(roundQueue[queueIndex]);
+}
+
+function renderCard() {
+  const card = currentCard();
+  if (!card) {
+    counterEl.textContent = "—";
+    return;
+  }
+  document.getElementById("card-front-text").innerHTML = card.front;
+  document.getElementById("card-back-text").innerHTML = card.back;
+  document.getElementById("card-subtopic-front").textContent = card.subtopic;
+  document.getElementById("card-subtopic-back").textContent = card.subtopic;
+  document.getElementById("card-num-front").textContent = `Card ${card.id}`;
+  document.getElementById("card-num-back").textContent = `Card ${card.id}`;
+  counterEl.textContent = `${queueIndex + 1} / ${roundQueue.length}`;
+  const img = document.getElementById("card-back-image");
+  if (card.image) {
+    img.src = card.image;
+    img.alt = card.imageAlt || "";
+    img.classList.remove("hidden");
+  } else {
+    img.classList.add("hidden");
+    img.removeAttribute("src");
+  }
+  mainCard.classList.remove("card-flipped");
+  hasFlippedCurrent = false;
+  updateNavButtons();
+  updateRatingHint();
+}
+
+function toggleFlip() {
+  if (view !== "study") return;
+  setFlipped(!mainCard.classList.contains("card-flipped"));
+}
+
+function setFlipped(flipped) {
+  mainCard.classList.toggle("card-flipped", flipped);
+  if (flipped) hasFlippedCurrent = true;
+  updateRatingHint();
+}
+
+function advanceAfterRating() {
+  queueIndex += 1;
+  if (queueIndex >= roundQueue.length) showSummary(false);
+  else renderCard();
+}
+
+function rateCard(kind) {
+  if (view !== "study" || !hasFlippedCurrent) {
+    ratingHint.classList.add("warn");
+    return;
+  }
+  const card = currentCard();
+  if (!card) return;
+  if (kind === "again") {
+    applyAgain(cardStates, card.id);
+    roundAgain += 1;
+  } else if (kind === "gotit") {
+    applyGotIt(cardStates, card.id);
+    roundGotIt += 1;
+  } else {
+    applyNeutral(cardStates, card.id);
+    roundNeutral += 1;
+  }
+  advanceAfterRating();
+}
+
+function goPrev() {
+  if (view !== "study" || queueIndex <= 0) return;
+  queueIndex -= 1;
+  renderCard();
+}
+
+function goNext() {
+  if (view !== "study" || queueIndex >= roundQueue.length - 1) return;
+  if (hasFlippedCurrent) {
+    const card = currentCard();
+    if (card) {
+      applyNeutral(cardStates, card.id);
+      roundNeutral += 1;
+    }
+  }
+  advanceAfterRating();
+}
+
+function showSummary(mastered) {
+  view = "summary";
+  studyPanel.hidden = true;
+  summaryWrap.hidden = false;
+  summaryPanel.innerHTML = renderRoundSummary({
+    lang,
+    roundNum,
+    deck,
+    cardStates,
+    roundStats: { gotIt: roundGotIt, again: roundAgain, neutral: roundNeutral },
+    mastered,
+  });
+  summaryPanel.querySelector("[data-action='next-round']")?.addEventListener("click", () => {
+    roundNum += 1;
+    startRound();
+  });
+  summaryPanel.querySelector("[data-action='restart']")?.addEventListener("click", () => {
+    startNewSession();
+  });
+}
+
+mainCard.addEventListener("click", (e) => {
+  if (e.target.closest("button")) return;
+  toggleFlip();
+});
+flipBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleFlip(); });
+prevBtn.addEventListener("click", (e) => { e.stopPropagation(); goPrev(); });
+nextBtn.addEventListener("click", (e) => { e.stopPropagation(); goNext(); });
+againBtn.addEventListener("click", (e) => { e.stopPropagation(); rateCard("again"); });
+easyBtn.addEventListener("click", (e) => { e.stopPropagation(); rateCard("gotit"); });
+
+document.addEventListener("keydown", (e) => {
+  if (view !== "study") return;
+  if (e.code === "Space") { e.preventDefault(); toggleFlip(); }
+  else if (e.code === "ArrowLeft" && !hasFlippedCurrent) { e.preventDefault(); goPrev(); }
+  else if (e.code === "ArrowRight" && !hasFlippedCurrent) { e.preventDefault(); goNext(); }
+  else if (e.key === "1" && hasFlippedCurrent) rateCard("again");
+  else if (e.key === "2" && hasFlippedCurrent) rateCard("gotit");
+  else if (e.code === "ArrowLeft" && hasFlippedCurrent) rateCard("again");
+  else if (e.code === "ArrowRight" && hasFlippedCurrent) goNext();
+});
+
+try {
+  const observer = new MutationObserver(() => {
+    lang = resolveLang();
+    updateModeToggle();
+    updateRoundBadge();
+    updateNavLabels();
+    updateRatingHint();
+  });
+  observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ["lang"] });
+} catch (_) { /* */ }
+
+modeToggle.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-mode]");
+  if (btn) setStudyMode(btn.dataset.mode);
+});
+
+window.addEventListener("message", (e) => {
+  if (e.data?.type === "s3bio-flashcards-reset") {
+    resetFlashcardSession();
+  }
+});
+
+lang = resolveLang();
+buildTags();
+buildFilters();
+updateModeToggle();
+updateNavLabels();
+startNewSession();
+</script>
+</body>
+</html>

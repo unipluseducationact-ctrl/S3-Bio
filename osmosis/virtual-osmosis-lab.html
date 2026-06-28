@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Virtual Osmosis Laboratory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        background: "#f7f9fb", secondary: "#006d37", "tertiary-fixed": "#ffdad7",
+        primary: "#004e9f", "outline-variant": "#c1c6d5", "on-secondary": "#ffffff",
+        "tertiary-container": "#c9242c", "surface-dim": "#d8dadc",
+        "surface-container-highest": "#e0e3e5", "primary-fixed": "#d7e3ff",
+        "on-background": "#191c1e", "surface-variant": "#e0e3e5",
+        surface: "#f7f9fb", "on-surface-variant": "#414753", "on-tertiary": "#ffffff",
+        "on-surface": "#191c1e", "surface-container-low": "#f2f4f6",
+        "surface-container-lowest": "#ffffff", "surface-container-high": "#e6e8ea",
+        "on-primary": "#ffffff", error: "#ba1a1a", tertiary: "#a50018",
+        "inverse-surface": "#2d3133", "primary-container": "#0066cc",
+        "on-primary-container": "#dfe8ff", "inverse-on-surface": "#eff1f3"
+      },
+      borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      spacing: { "margin-mobile": "16px", "container-max": "1200px", gutter: "24px", "margin-desktop": "64px" },
+      fontFamily: {
+        "headline-xl": ["Inter", "sans-serif"], "body-md": ["Inter", "sans-serif"], "label-code": ["SF Mono", "Monaco", "Consolas", "monospace"],
+        "headline-lg-mobile": ["Inter", "sans-serif"], "headline-lg": ["Inter", "sans-serif"],
+        "label-bold": ["Inter", "sans-serif"], "body-sm": ["Inter", "sans-serif"]
+      },
+      fontSize: {
+        "headline-xl": ["40px", { lineHeight: "52px", letterSpacing: "-0.02em", fontWeight: "800" }],
+        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+        "label-code": ["13px", { lineHeight: "16px", fontWeight: "500" }],
+        "headline-lg-mobile": ["24px", { lineHeight: "32px", fontWeight: "700" }],
+        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+        "label-bold": ["14px", { lineHeight: "18px", fontWeight: "600" }],
+        "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }]
+      }
+    }
+  }
+};
+</script>
+<style>
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+#particle-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; opacity: 0.4; }
+#sim-canvas { display: block; width: 100%; height: 100%; }
+.shiny-text {
+  background: linear-gradient(90deg, #004e9f 0%, #0066cc 25%, #d7e3ff 50%, #0066cc 75%, #004e9f 100%);
+  background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text;
+  animation: shine 3s linear infinite;
+}
+@keyframes shine { to { background-position: 200% center; } }
+input[type=range] { -webkit-appearance: none; background: transparent; }
+input[type=range]::-webkit-slider-runnable-track { background: rgba(255,255,255,0.3); border-radius: 10px; height: 6px; backdrop-filter: blur(4px); }
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #004e9f;
+  cursor: pointer; margin-top: -7px; box-shadow: 0 0 10px rgba(0,78,159,0.3); border: 2px solid white;
+}
+</style>
+<link href="./embed.css" rel="stylesheet"/>
+<script src="./embed.js"></script>
+<link href="./draw-tool.css" rel="stylesheet"/>
+<script src="./draw-tool.js" defer></script>
+<script src="./tool-back.js"></script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<canvas id="particle-canvas"></canvas>
+<main class="bio-tool-page-main max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-10">
+<header class="mb-8 text-center md:text-left">
+<h1 class="font-headline-xl text-headline-xl mb-4 shiny-text">Virtual Osmosis Laboratory</h1>
+<p class="text-on-surface-variant max-w-2xl font-body-md">Adjust molarity and observe net water movement across a differentially permeable membrane. Water moves from higher ψ to lower ψ — toward the more concentrated side.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<aside class="lg:col-span-3 space-y-6">
+<div class="bg-surface-container-low p-6 rounded-xl shadow-sm border border-outline-variant/20 backdrop-blur-sm bg-opacity-70">
+<h3 class="font-label-bold text-label-bold uppercase tracking-wider mb-6 text-primary">Experiment Parameters</h3>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between mb-3">
+<label class="font-label-bold text-label-bold" id="molarity-a-label-text">Molarity A (top)</label>
+<span class="font-label-code text-label-code text-primary" id="molarity-a-label">0.20 M</span>
+</div>
+<input class="w-full" id="molarity-a" max="2" min="0" step="0.05" type="range" value="0.2"/>
+</div>
+<div>
+<div class="flex justify-between mb-3">
+<label class="font-label-bold text-label-bold" id="molarity-b-label-text">Molarity B (bottom)</label>
+<span class="font-label-code text-label-code text-primary" id="molarity-b-label">1.00 M</span>
+</div>
+<input class="w-full" id="molarity-b" max="2" min="0" step="0.05" type="range" value="1"/>
+</div>
+<div>
+<div class="flex justify-between mb-3">
+<label class="font-label-bold text-label-bold">Temperature</label>
+<span class="font-label-code text-label-code text-primary" id="temperature-label">25 °C</span>
+</div>
+<input class="w-full" id="temperature" max="100" min="0" step="1" type="range" value="25"/>
+</div>
+<div>
+<div class="flex justify-between mb-3">
+<label class="font-label-bold text-label-bold">Pressure Potential</label>
+<span class="font-label-code text-label-code text-primary" id="pressure-label">0.2 MPa</span>
+</div>
+<input class="w-full" id="pressure" max="1" min="0" step="0.1" type="range" value="0.2"/>
+</div>
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked class="w-4 h-4 rounded border-outline text-primary focus:ring-primary" id="membrane-intact" type="checkbox"/>
+<span class="font-label-bold text-label-bold text-body-sm">Membrane intact (differentially permeable)</span>
+</label>
+<div class="flex gap-2 hidden" id="cell-quick-presets">
+<button class="flex-1 text-body-sm font-label-bold py-2 px-3 rounded-lg border border-primary text-primary hover:bg-primary-fixed" id="preset-tap-water" type="button">Tap water</button>
+<button class="flex-1 text-body-sm font-label-bold py-2 px-3 rounded-lg border border-tertiary text-tertiary hover:bg-tertiary-fixed/30" id="preset-salt-water" type="button">Salt solution</button>
+</div>
+<div class="pt-2 space-y-4">
+<button class="w-full bg-primary text-on-primary font-label-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2" id="start-btn" type="button">
+<span class="material-symbols-outlined">play_arrow</span> Start Simulation
+</button>
+<button class="w-full border-2 border-primary text-primary font-label-bold py-4 rounded-xl hover:bg-primary-fixed transition-all flex items-center justify-center gap-2" id="reset-btn" type="button">
+<span class="material-symbols-outlined">refresh</span> Reset Experiment
+</button>
+</div>
+</div>
+</div>
+<div class="bg-white border-l-4 border-tertiary p-6 rounded-xl shadow-sm">
+<div class="flex items-center gap-2 mb-3 text-tertiary">
+<span class="material-symbols-outlined">lightbulb</span>
+<span class="font-label-bold">Exam Tip</span>
+</div>
+<p class="text-body-sm text-on-surface-variant" id="exam-tip">Remember that water always moves from a region of higher water potential (less negative) to a region of lower water potential (more negative).</p>
+</div>
+</aside>
+<section class="lg:col-span-9">
+<div class="flex flex-wrap gap-2 mb-4">
+<button class="preset-tab px-4 py-2 rounded-full font-label-bold text-body-sm bg-primary text-on-primary transition-colors" data-preset="chamber" type="button">Divided chamber</button>
+<button class="preset-tab px-4 py-2 rounded-full font-label-bold text-body-sm text-on-surface-variant hover:bg-surface-container-low transition-colors" data-preset="dialysis" type="button">Dialysis tubing</button>
+<button class="preset-tab px-4 py-2 rounded-full font-label-bold text-body-sm text-on-surface-variant hover:bg-surface-container-low transition-colors" data-preset="cell" type="button">Cell in solution</button>
+</div>
+<div class="relative bg-surface-container-highest h-[600px] rounded-xl overflow-hidden shadow-xl border border-white/40" id="sim-container">
+<canvas id="sim-canvas"></canvas>
+<div class="absolute top-4 right-4 flex items-center gap-2 bg-white/60 backdrop-blur-md px-4 py-2 rounded-full border border-white pointer-events-none">
+<div class="w-2 h-2 rounded-full bg-secondary animate-ping"></div>
+<span class="text-label-code font-label-code">LIVE SIMULATION</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<script type="module" src="./js/osmosisLabController.js"></script>
+</body>
+</html>

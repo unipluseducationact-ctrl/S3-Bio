@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ch 3 Membrane Transport Summary</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        background: "#f7f9fb", secondary: "#006d37", "tertiary-fixed": "#ffdad7",
+        primary: "#004e9f", "outline-variant": "#c1c6d5", "on-secondary": "#ffffff",
+        "tertiary-container": "#c9242c", "surface-dim": "#d8dadc",
+        "surface-container-highest": "#e0e3e5", "primary-fixed": "#d7e3ff",
+        "on-background": "#191c1e", "surface-variant": "#e0e3e5",
+        surface: "#f7f9fb", "on-surface-variant": "#414753", "on-tertiary": "#ffffff",
+        "on-surface": "#191c1e", "surface-container-low": "#f2f4f6",
+        "surface-container-lowest": "#ffffff", "surface-container-high": "#e6e8ea",
+        "on-primary": "#ffffff", error: "#ba1a1a", tertiary: "#a50018",
+        "inverse-surface": "#2d3133", "primary-container": "#0066cc",
+        "on-primary-container": "#dfe8ff", "inverse-on-surface": "#eff1f3"
+      },
+      borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      spacing: { "margin-mobile": "16px", "container-max": "1200px", gutter: "24px", "margin-desktop": "64px" },
+      fontFamily: {
+        "headline-xl": ["Inter", "sans-serif"], "body-md": ["Inter", "sans-serif"], "label-code": ["SF Mono", "Monaco", "Consolas", "monospace"],
+        "headline-lg-mobile": ["Inter", "sans-serif"], "headline-lg": ["Inter", "sans-serif"],
+        "label-bold": ["Inter", "sans-serif"], "body-sm": ["Inter", "sans-serif"]
+      },
+      fontSize: {
+        "headline-xl": ["40px", { lineHeight: "52px", letterSpacing: "-0.02em", fontWeight: "800" }],
+        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+        "label-code": ["13px", { lineHeight: "16px", fontWeight: "500" }],
+        "headline-lg-mobile": ["24px", { lineHeight: "32px", fontWeight: "700" }],
+        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+        "label-bold": ["14px", { lineHeight: "18px", fontWeight: "600" }],
+        "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }]
+      }
+    }
+  }
+};
+</script>
+<style>
+.glass-frost { background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.glowing-separator { height: 1px; background: linear-gradient(90deg, transparent, #005cba, transparent); opacity: 0.3; }
+.topic-pill { scroll-margin-top: 1rem; }
+.topic-nav a { scroll-behavior: smooth; }
+.def-box { border-left: 4px solid #004e9f; }
+.step-num {
+  width: 1.75rem; height: 1.75rem; border-radius: 9999px;
+  background: #004e9f; color: #fff; font-size: 0.75rem; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+html { scroll-behavior: smooth; }
+.fig-box {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 1rem;
+  background: #fff;
+  border: 1px solid rgba(193, 198, 213, 0.45);
+  overflow: hidden;
+}
+.fig-box img {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 0.5rem;
+  background: #f7f9fb;
+}
+.fig-box.fig-tall img { max-height: 420px; }
+.fig-box.fig-wide img { max-height: 260px; }
+.fig-box.fig-graph img { max-height: 380px; }
+.fig-caption {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: #414753;
+  opacity: 0.9;
+}
+.exam-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.exam-checklist li .material-symbols-outlined {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.exam-checklist .checklist-text {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.55;
+}
+.exam-checklist .checklist-body {
+  flex: 1;
+  min-width: 0;
+}
+.exam-checklist .checklist-body .fig-box {
+  margin-top: 0.75rem;
+}
+.fig-grid {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .fig-grid-2 { grid-template-columns: 1fr 1fr; }
+}
+.membrane-anim-embed {
+  margin: 1.25rem 0 1.5rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(193, 198, 213, 0.55);
+  box-shadow: 0 12px 32px rgba(0, 78, 159, 0.12);
+  background: #03080c;
+}
+.membrane-anim-embed iframe {
+  width: 100%;
+  height: min(640px, 72vh);
+  min-height: 420px;
+  border: 0;
+  display: block;
+}
+.download-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 auto 1.25rem;
+  padding: 0.5rem 0.75rem;
+  max-width: 36rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(193, 198, 213, 0.55);
+  border-radius: 9999px;
+  box-shadow: 0 4px 20px rgba(0, 78, 159, 0.08);
+}
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.export-btn:disabled { opacity: 0.55; cursor: wait; }
+.export-btn-pdf { background: #004e9f; color: #fff; }
+.export-btn-word { background: #006d37; color: #fff; }
+.export-btn-ghost {
+  background: #f2f4f6;
+  color: #414753;
+  border: 1px solid #c1c6d5;
+}
+#export-status {
+  flex: 1 1 100%;
+  text-align: center;
+  font-size: 0.75rem;
+  min-height: 1rem;
+}
+@media print {
+  .no-export, .download-bar, .membrane-anim-embed { display: none !important; }
+  body { padding: 0 !important; background: #fff !important; }
+  main { max-width: 100% !important; padding: 0 !important; }
+  section, .fig-box, table, .glass-frost { opacity: 1 !important; transform: none !important; page-break-inside: avoid; break-inside: avoid; }
+  .fig-box img { max-height: none !important; }
+}
+</style>
+<link href="./embed.css" rel="stylesheet"/>
+<script src="./embed.js"></script>
+<link href="./draw-tool.css" rel="stylesheet"/>
+<script src="./draw-tool.js" defer></script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+
+<main id="export-root" class="max-w-4xl mx-auto px-6 py-8 md:py-12">
+
+<div class="download-bar no-export" role="region" aria-label="Download summary">
+<button type="button" class="export-btn export-btn-word" id="btn-download-word" data-export-btn>
+<span class="material-symbols-outlined text-[18px]">description</span> Download Word
+</button>
+<button type="button" class="export-btn export-btn-ghost" id="btn-download-pdf-print" data-export-btn title="Opens print dialog — choose Save as PDF">
+<span class="material-symbols-outlined text-[18px]">print</span> Print / Save PDF
+</button>
+<p id="export-status" class="text-on-surface-variant" aria-live="polite"></p>
+</div>
+
+<header class="mb-12 text-center topic-pill" id="top">
+<div class="inline-block px-4 py-1 mb-6 bg-secondary/10 text-secondary rounded-full font-label-bold">
+  Chapter 3 · Membrane transport (all topics)
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-background mb-4">
+  Membrane <span class="text-primary">Quick Summary</span>
+</h1>
+<p class="text-on-surface-variant max-w-2xl mx-auto">
+  Structure, permeability, diffusion, osmosis, active transport &amp; phagocytosis. (Exercises omitted.)
+</p>
+<div class="flex flex-wrap justify-center gap-2 mt-8 topic-nav">
+<a class="px-3 py-1.5 rounded-full bg-primary/10 text-primary font-label-bold text-body-sm hover:bg-primary/20" href="#fluid-mosaic">Fluid mosaic</a>
+<a class="px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-bold text-body-sm hover:bg-primary/10 hover:text-primary" href="#permeability">Permeability</a>
+<a class="px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-bold text-body-sm hover:bg-primary/10 hover:text-primary" href="#osmosis">Osmosis</a>
+<a class="px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant font-label-bold text-body-sm hover:bg-primary/10 hover:text-primary" href="#phagocytosis">Phagocytosis</a>
+</div>
+</header>
+
+<div class="glowing-separator mb-14"></div>
+
+<!-- 1. Fluid Mosaic -->
+<section class="mb-16 topic-pill" id="fluid-mosaic">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined">layers</span> Fluid mosaic model <span class="text-body-sm font-normal text-on-surface-variant">流動鑲嵌模型</span>
+</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="p-6 rounded-2xl bg-surface-container-lowest border border-outline-variant/30">
+<span class="material-symbols-outlined text-primary text-3xl mb-3">water_drop</span>
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile mb-2">Fluid 流動</h3>
+<p class="text-on-surface-variant text-body-sm leading-relaxed">
+  The <strong>phospholipid bilayer 磷脂雙層</strong> is fluid: phospholipids and embedded proteins can move <strong>laterally 橫向移動</strong>. This gives the membrane <strong>flexibility 靈活性</strong>.
+</p>
+</div>
+<div class="p-6 rounded-2xl bg-surface-container-lowest border border-outline-variant/30">
+<span class="material-symbols-outlined text-secondary text-3xl mb-3">grid_view</span>
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile mb-2">Mosaic 馬賽克</h3>
+<p class="text-on-surface-variant text-body-sm leading-relaxed">
+  <strong>Membrane proteins 膜蛋白</strong> are embedded in a <strong>mosaic pattern</strong> — scattered among phospholipids rather than forming one uniform layer.
+</p>
+</div>
+</div>
+<div class="p-5 rounded-xl bg-primary-fixed/40 border border-primary/20 text-body-sm">
+<strong class="text-primary">Membrane folding 膜折疊:</strong> Some unicellular organisms 單細胞生物 take in food by infolding the cell membrane. This needs membrane <strong>fluidity 流動性</strong> (not rigidity).
+</div>
+<figure class="fig-box fig-tall">
+<img src="./assets/page01_img2.jpeg" alt="Fluid mosaic model diagram showing phospholipid bilayer, proteins, and carbohydrate chains"/>
+<figcaption class="fig-caption">Fig 1 · Fluid mosaic model — phospholipid bilayer with embedded protein molecules and carbohydrate chains on the extracellular side.</figcaption>
+</figure>
+</section>
+
+<!-- 2. Differential permeability -->
+<section class="mb-16 topic-pill" id="permeability">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Differential permeability <span class="text-body-sm font-normal text-on-surface-variant">差異滲透性</span></h2>
+<p class="text-on-surface-variant mb-6 text-body-sm">
+  <strong>Like water 似水:</strong> polar 極性 molecules are water-soluble (hydrophilic 親水).
+  <strong>Like oil 似油:</strong> non-polar 非極性 molecules are lipid-soluble (hydrophobic 疏水).
+</p>
+<div class="rounded-3xl overflow-hidden glass-frost border border-white/40 shadow-xl">
+<table class="w-full text-left border-collapse text-body-sm">
+<thead>
+<tr class="bg-primary/10">
+<th class="p-4 font-label-bold text-primary">Substance</th>
+<th class="p-4 font-label-bold text-primary">Examples</th>
+<th class="p-4 font-label-bold text-primary">Movement across membrane</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant/10">
+<td class="p-4 font-semibold">Small, non-polar 非極性小分子</td>
+<td class="p-4 text-on-surface-variant">O₂, CO₂, fatty acids 脂肪酸, glycerol 甘油</td>
+<td class="p-4 text-on-surface-variant">Through <strong>phospholipid bilayer</strong></td>
+</tr>
+<tr class="border-b border-outline-variant/10">
+<td class="p-4 font-semibold">Small, polar 極性小分子</td>
+<td class="p-4 text-on-surface-variant">Water, amino acids 胺基酸, glucose 葡萄糖</td>
+<td class="p-4 text-on-surface-variant">Via <strong>proteins</strong> (channels/carriers)</td>
+</tr>
+<tr class="border-b border-outline-variant/10">
+<td class="p-4 font-semibold">Small ions (charged) 帶電荷小離子</td>
+<td class="p-4 text-on-surface-variant">Na⁺ 鈉, Ca²⁺ 鈣</td>
+<td class="p-4 text-on-surface-variant">Via <strong>proteins</strong></td>
+</tr>
+<tr>
+<td class="p-4 font-semibold">Large molecules 大分子</td>
+<td class="p-4 text-on-surface-variant">Starch, triglycerides 三酸甘油酯, proteins 蛋白質</td>
+<td class="p-4 text-on-surface-variant"><strong>Membrane folding</strong> (e.g. phagocytosis) — not simple diffusion</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="mt-4 text-tertiary font-label-bold text-body-sm flex items-start gap-2">
+<span class="material-symbols-outlined text-lg">warning</span>
+<span>Common mix-up: glucose &amp; ions do <em>not</em> cross the bilayer directly — they need membrane proteins.</span>
+</p>
+
+<div class="membrane-anim-embed no-export topic-pill" id="membrane-3d">
+<iframe
+  title="Interactive membrane transport 3D model · 互動細胞膜跨膜運輸模型"
+  src="./membrane-animation.html"
+  loading="lazy"
+  onload="this.contentWindow.postMessage('membrane-resize', '*')"
+></iframe>
+</div>
+
+<figure class="fig-box fig-tall">
+<img src="./assets/page02_img2.jpeg" alt="Differential permeability diagram showing how different molecule types cross the membrane"/>
+<figcaption class="fig-caption">Fig 2 · Differential permeability — (1) non-polar via bilayer; (2–3) polar/ions via channel &amp; carrier proteins; (4) large molecules blocked.</figcaption>
+</figure>
+</section>
+
+<!-- 3. Phospholipid -->
+<section class="mb-16 topic-pill" id="phospholipid">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Phospholipid bilayer <span class="text-body-sm font-normal text-on-surface-variant">磷脂雙層</span></h2>
+<div class="def-box pl-5 py-3 mb-6 bg-surface-container-lowest rounded-r-xl">
+<p class="text-on-surface-variant text-body-sm">
+  <strong>Hydrophilic 親水 head</strong> (phosphate group) + <strong>hydrophobic 疏水 tail</strong> (fatty acid tails)
+  → in water, phospholipids form a <strong>“tail-to-tail” bilayer</strong>: hydrophobic tails face inward; hydrophilic heads face aqueous environments on both sides.
+</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-body-sm">
+<div class="p-4 rounded-xl bg-primary/5 border border-primary/15">
+<div class="font-label-bold text-primary mb-1">Head</div>
+<div class="text-on-surface-variant">Hydrophilic 親水</div>
+</div>
+<div class="p-4 rounded-xl bg-secondary/5 border border-secondary/15">
+<div class="font-label-bold text-secondary mb-1">Inner core</div>
+<div class="text-on-surface-variant">Hydrophobic tails 疏水</div>
+</div>
+<div class="p-4 rounded-xl bg-primary/5 border border-primary/15">
+<div class="font-label-bold text-primary mb-1">Head</div>
+<div class="text-on-surface-variant">Hydrophilic 親水</div>
+</div>
+</div>
+<figure class="fig-box fig-tall">
+<img src="./assets/page08_img1.jpeg" alt="Comparison of triglyceride and phospholipid structure with hydrophilic head and hydrophobic tails"/>
+<figcaption class="fig-caption">Fig 3a · Triglyceride (fully hydrophobic) vs phospholipid (hydrophilic head + hydrophobic tails).</figcaption>
+</figure>
+<figure class="fig-box fig-wide">
+<img src="./assets/page08_img2_bilayer.jpeg" alt="Phospholipid bilayer — heads face extracellular fluid and cytoplasm; fatty acid tails meet in the middle"/>
+<figcaption class="fig-caption">Fig 3b · Phospholipid bilayer — tail-to-tail arrangement; heads face <strong>outside the cell (extracellular fluid)</strong> and <strong>inside the cell (cytoplasm)</strong>; hydrophobic tails in the core.</figcaption>
+</figure>
+</section>
+
+<!-- 4. Membrane proteins -->
+<section class="mb-16 topic-pill" id="proteins">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Membrane proteins <span class="text-body-sm font-normal text-on-surface-variant">膜蛋白</span></h2>
+<div class="rounded-3xl overflow-hidden glass-frost border border-white/40 shadow-xl">
+<table class="w-full text-left border-collapse text-body-sm">
+<thead>
+<tr class="bg-secondary/10">
+<th class="p-4 font-label-bold text-secondary">Type</th>
+<th class="p-4 font-label-bold text-secondary">Function</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant/10"><td class="p-4 font-semibold">Enzymes 酶</td><td class="p-4 text-on-surface-variant">Speed up chemical reactions on the membrane</td></tr>
+<tr class="border-b border-outline-variant/10"><td class="p-4 font-semibold">Channel proteins 通道蛋白</td><td class="p-4 text-on-surface-variant">Provide channels for water-soluble molecules (do <strong>not</strong> transport by shape change)</td></tr>
+<tr class="border-b border-outline-variant/10"><td class="p-4 font-semibold">Carrier / transport proteins 輸運蛋白</td><td class="p-4 text-on-surface-variant">Transport substances by <strong>shape change</strong>; energy from <strong>respiration 呼吸作用</strong> when active transport</td></tr>
+<tr class="border-b border-outline-variant/10"><td class="p-4 font-semibold">Receptor proteins 受體蛋白</td><td class="p-4 text-on-surface-variant">Like a “card reader” — bind 結合 specific chemical messengers (e.g. hormones) to regulate cell activities</td></tr>
+<tr><td class="p-4 font-semibold">Glycoproteins 糖蛋白</td><td class="p-4 text-on-surface-variant">Like an “ID card” — act as <strong>antigen 抗原</strong> for cell identification</td></tr>
+</tbody>
+</table>
+</div>
+<figure class="fig-box fig-wide">
+<img src="./assets/page09_img3.jpeg" alt="Membrane protein functions: metabolic catalyst, material exchange, reception and recognition"/>
+<figcaption class="fig-caption">Fig 4 · Membrane protein roles — enzymes; channel &amp; carrier proteins; receptor &amp; glycoprotein (cell ID).</figcaption>
+</figure>
+</section>
+
+<!-- 5. Damage factors -->
+<section class="mb-16 topic-pill" id="damage">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Factors damaging the cell membrane</h2>
+<p class="text-on-surface-variant text-body-sm mb-4"><strong>“Juice leaked 漏汁”</strong> = membrane damaged — cell contents escape.</p>
+<div class="rounded-3xl overflow-hidden glass-frost border border-white/40 shadow-xl overflow-x-auto">
+<table class="w-full text-left border-collapse text-body-sm min-w-[640px]">
+<thead>
+<tr class="bg-tertiary/10">
+<th class="p-3 font-label-bold text-tertiary">Factor</th>
+<th class="p-3 font-label-bold text-tertiary">Phospholipids 磷脂</th>
+<th class="p-3 font-label-bold text-tertiary">Membrane proteins 膜蛋白</th>
+<th class="p-3 font-label-bold text-tertiary">Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3 font-semibold">Organic solvents 有機溶劑</td>
+<td class="p-3 text-on-surface-variant">Dissolve lipid bilayer</td>
+<td class="p-3 text-on-surface-variant">Denature 變性</td>
+<td class="p-3 text-on-surface-variant">Ethanol 乙醇, alcohol 酒精</td>
+</tr>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3 font-semibold">Detergents 清潔劑</td>
+<td class="p-3 text-on-surface-variant">Dissolve lipid bilayer</td>
+<td class="p-3 text-on-surface-variant">Break protein–lipid interactions</td>
+<td class="p-3 text-on-surface-variant">Soap 肥皂</td>
+</tr>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3 font-semibold">Extreme pH</td>
+<td class="p-3 text-on-surface-variant">Destabilize lipid bilayer</td>
+<td class="p-3 text-on-surface-variant">Denature</td>
+<td class="p-3 text-on-surface-variant">Stomach acid</td>
+</tr>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3 font-semibold">High temperature</td>
+<td class="p-3 text-on-surface-variant">Destabilize lipid bilayer</td>
+<td class="p-3 text-on-surface-variant">Denature</td>
+<td class="p-3 text-on-surface-variant">Boiling</td>
+</tr>
+<tr>
+<td class="p-3 font-semibold">Mechanical stress 機械應力</td>
+<td class="p-3 text-on-surface-variant">—</td>
+<td class="p-3 text-on-surface-variant">—</td>
+<td class="p-3 text-on-surface-variant">Pressure; excessive water entering cells</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="mt-3 text-body-sm text-on-surface-variant"><em>Application:</em> use these factors to kill harmful microorganisms (e.g. bacteria).</p>
+<figure class="fig-box fig-graph">
+<img src="./assets/page10_img1.jpeg" alt="Beetroot ethanol experiment: pigment leakage and absorbance graph vs ethanol concentration"/>
+<figcaption class="fig-caption">Fig 5 · Ethanol damages membrane → red pigment leaks (“juice leaked”). Graph: absorbance rises sharply above ~20% ethanol.</figcaption>
+</figure>
+</section>
+
+<!-- 6. Transport overview -->
+<section class="mb-16 topic-pill" id="transport">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Overview of membrane transports</h2>
+<div class="rounded-3xl overflow-hidden glass-frost border border-white/40 shadow-xl overflow-x-auto">
+<table class="w-full text-left border-collapse text-body-sm min-w-[700px]">
+<thead>
+<tr class="bg-primary/10">
+<th class="p-3 font-label-bold text-primary">Membrane transport</th>
+<th class="p-3 font-label-bold text-primary">Direction / description</th>
+<th class="p-3 font-label-bold text-primary">Energy needed?</th>
+<th class="p-3 font-label-bold text-primary">Membrane needed?</th>
+<th class="p-3 font-label-bold text-primary">When net 淨 movement stop?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3 font-semibold">Diffusion 擴散</td>
+<td class="p-3 text-on-surface-variant">Along concentration gradient 濃度梯度 (high to low conc)</td>
+<td class="p-3 text-on-surface-variant">Passive 被動</td>
+<td class="p-3 text-on-surface-variant">No</td>
+<td class="p-3 text-on-surface-variant">When equilibrium 平衡 (no conc. gradient)</td>
+</tr>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3 font-semibold">Osmosis 滲透</td>
+<td class="p-3 text-on-surface-variant">Water molecules across a <strong>differentially permeable 差異滲透性</strong> membrane along water potential 水勢 gradient</td>
+<td class="p-3 text-on-surface-variant">Passive 被動</td>
+<td class="p-3 text-on-surface-variant">Yes (living or dead)</td>
+<td class="p-3 text-on-surface-variant">When water potential is equal on both sides</td>
+</tr>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3 font-semibold">Active transport 主動運輸</td>
+<td class="p-3 text-on-surface-variant">Against conc. gradient, or along conc. gradient but <strong>faster</strong></td>
+<td class="p-3 text-on-surface-variant">Active 主動</td>
+<td class="p-3 text-on-surface-variant">Yes (living)</td>
+<td class="p-3 text-on-surface-variant">No energy — e.g. inhibited respiration 抑制呼吸; killing the cell</td>
+</tr>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3 font-semibold">Endocytosis 內吞作用 / Phagocytosis 吞噬作用</td>
+<td class="p-3 text-on-surface-variant">Engulfing 吞入 by membrane folding into vesicles 囊泡</td>
+<td class="p-3 text-on-surface-variant">Active</td>
+<td class="p-3 text-on-surface-variant">Living</td>
+<td class="p-3 text-on-surface-variant">—</td>
+</tr>
+<tr>
+<td class="p-3 font-semibold">Exocytosis 外排作用</td>
+<td class="p-3 text-on-surface-variant">Transport out by vesicle fusion</td>
+<td class="p-3 text-on-surface-variant">Active</td>
+<td class="p-3 text-on-surface-variant">Living</td>
+<td class="p-3 text-on-surface-variant">—</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure class="fig-box fig-wide">
+<img src="./assets/page15_img1.jpeg" alt="Overview of diffusion, osmosis, active transport, and phagocytosis"/>
+<figcaption class="fig-caption">Fig 6 · Four transport types at a glance — diffusion, osmosis (water only), active transport (ATP), phagocytosis (engulfing).</figcaption>
+</figure>
+</section>
+
+<!-- 7. Net movement -->
+<section class="mb-16 topic-pill" id="net">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Concept of net 淨 movement</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20">
+<p class="font-label-bold text-primary mb-2">Equal rates → no net movement</p>
+<p class="text-body-sm text-on-surface-variant font-label-code">▶ 10 molecules &nbsp; ◀ 10 molecules</p>
+<p class="mt-2 text-body-sm text-on-surface-variant">Molecules still move, but there is <strong>no net</strong> change in concentration on either side.</p>
+</div>
+<div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20">
+<p class="font-label-bold text-secondary mb-2">Unequal rates → net movement</p>
+<p class="text-body-sm text-on-surface-variant font-label-code">▶ 10 molecules &nbsp; ◀ 5 molecules → net ▶ 5</p>
+<p class="mt-2 text-body-sm text-on-surface-variant"><strong>No net movement ≠ no movement!</strong></p>
+</div>
+</div>
+<figure class="fig-box">
+<img src="./assets/page16_img2.jpeg" alt="Selectively permeable membrane: small molecules pass, large solute blocked"/>
+<figcaption class="fig-caption">Fig 7 · Differentially permeable membrane — small molecules pass pores; large solute particles cannot cross.</figcaption>
+</figure>
+</section>
+
+<!-- 8. Diffusion -->
+<section class="mb-16 topic-pill" id="diffusion">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Diffusion 擴散作用</h2>
+<p class="def-box pl-5 py-3 mb-6 bg-surface-container-lowest rounded-r-xl text-body-sm text-on-surface-variant">
+  <strong>Definition:</strong> Net movement of molecules from a region of <strong>higher</strong> concentration to <strong>lower</strong> concentration until equilibrium.
+</p>
+<figure class="fig-box mb-6">
+<img src="./assets/page16_img1.jpeg" alt="Net movement vs random movement — equal arrows mean no net movement"/>
+<figcaption class="fig-caption">Net movement 淨移動 — more molecules one way than the other (▶▶▶ vs ◀◀). Equal traffic both ways = <strong>no net movement</strong> (not “no movement”).</figcaption>
+</figure>
+<h3 class="font-label-bold text-label-bold mb-3">Factors that speed up diffusion (to reach equilibrium faster)</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-body-sm">
+<div class="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/20">
+<strong class="text-primary">Greater concentration gradient</strong>
+<p class="text-on-surface-variant mt-1">e.g. movement of intestine 腸; remove materials by capillaries 微血管</p>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/20">
+<strong class="text-primary">Larger surface area</strong>
+<p class="text-on-surface-variant mt-1">Highly-folded 高度折疊 structures (e.g. microvilli)</p>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/20">
+<strong class="text-primary">Shorter distance</strong>
+<p class="text-on-surface-variant mt-1">Thin walls, “one-cell-thick”</p>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/20">
+<strong class="text-primary">Higher temperature</strong>
+<p class="text-on-surface-variant mt-1">Higher kinetic energy 動能 of molecules</p>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/20 sm:col-span-2">
+<strong class="text-primary">Smaller size of particles &amp; non-polar molecules</strong>
+<p class="text-on-surface-variant mt-1">CO₂, O₂ diffuse faster than glucose (C₆H₁₂O₆). Lipids via bilayer; amino acids via membrane proteins.</p>
+</div>
+</div>
+<figure class="fig-box fig-tall">
+<img src="./assets/page16_img3.jpeg" alt="Diffusion and facilitated diffusion across phospholipid bilayer"/>
+<figcaption class="fig-caption">Fig 8 · Diffusion — non-polar particles pass through bilayer; polar / ions via membrane proteins (high → low concentration).</figcaption>
+</figure>
+</section>
+
+<!-- 9. Osmosis -->
+<section class="mb-16 topic-pill" id="osmosis">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Osmosis 滲透作用</h2>
+<div class="def-box pl-5 py-4 mb-6 bg-primary-fixed/30 rounded-r-2xl">
+<p class="font-label-bold text-primary mb-2">Formal definition (align with notes)</p>
+<p class="text-on-surface-variant text-body-sm leading-relaxed">
+  Osmosis is the <strong>net movement of water molecules</strong> across a <strong>differentially permeable 差異滲透性</strong> membrane
+  from a region of <strong>higher water potential 水勢</strong> to a region of <strong>lower water potential</strong>.
+  <br/><span class="opacity-80">水分子穿過差異滲透膜，從水勢較高的區域向水勢較低的區域的淨移動</span>
+</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+<div class="p-6 rounded-2xl bg-surface-container-lowest border border-outline-variant/30">
+<span class="material-symbols-outlined text-primary text-3xl mb-3">checklist</span>
+<h3 class="font-headline-lg-mobile mb-3">Requirements</h3>
+<ol class="list-decimal list-inside text-body-sm text-on-surface-variant space-y-2">
+<li>Differentially permeable membrane</li>
+<li>Water potential difference between two regions</li>
+</ol>
+</div>
+<div class="p-6 rounded-2xl bg-secondary/5 border border-secondary/20">
+<span class="material-symbols-outlined text-secondary text-3xl mb-3">water</span>
+<h3 class="font-headline-lg-mobile mb-3">Water follows solute! 水跟溶質走</h3>
+<p class="text-body-sm text-on-surface-variant leading-relaxed">
+  More solute → lower water concentration → <strong>lower water potential</strong>.
+  Net water moves toward the side with <strong>more solute</strong> (lower ψ).
+  Osmosis is <strong>passive 被動</strong> — no energy required.
+</p>
+</div>
+</div>
+
+<div class="rounded-3xl overflow-hidden glass-frost border border-white/40 shadow-xl mb-8">
+<table class="w-full text-left border-collapse text-body-sm">
+<thead>
+<tr class="bg-primary/10">
+<th class="p-4 font-label-bold text-primary">Region</th>
+<th class="p-4 font-label-bold text-primary">Solute</th>
+<th class="p-4 font-label-bold text-primary">Water potential ψ</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant/10">
+<td class="p-4">Less solute (more dilute)</td>
+<td class="p-4 text-on-surface-variant">Lower solute concentration</td>
+<td class="p-4 text-on-surface-variant"><strong>Higher</strong> ψ (e.g. pure water ≈ 0)</td>
+</tr>
+<tr>
+<td class="p-4">More solute (more concentrated)</td>
+<td class="p-4 text-on-surface-variant">Higher solute concentration</td>
+<td class="p-4 text-on-surface-variant"><strong>Lower</strong> ψ (more negative)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="fig-grid fig-grid-2 mb-8">
+<figure class="fig-box fig-tall">
+<img src="./assets/page18_img2.jpeg" alt="Osmosis: net water movement from high to low water potential across differentially permeable membrane"/>
+<figcaption class="fig-caption">Fig 9 · Water potential — net H₂O moves from higher ψ (dilute) to lower ψ (concentrated); solute cannot cross.</figcaption>
+</figure>
+<figure class="fig-box fig-tall">
+<img src="./assets/page18_img1.jpeg" alt="Water potential values table and credit-card analogy for osmosis direction"/>
+<figcaption class="fig-caption">Fig 10 · ψ (kPa): pure water 0; 5% sucrose −2; 10% sucrose −10. More negative = lower ψ.</figcaption>
+</figure>
+</div>
+
+<figure class="fig-box fig-wide mb-8">
+<img src="./assets/page19_img1.png" alt="Osmosis investigation: dialysis tubing in dilute sucrose with capillary tube rising"/>
+<figcaption class="fig-caption">Fig 11 · Concentrated sucrose <strong>X</strong> inside tubing, dilute <strong>Y</strong> outside → net water moves <strong>Y → X</strong> (into tubing) → capillary level rises (more water enters than leaves).</figcaption>
+</figure>
+
+<figure class="fig-box mb-8">
+<img src="./assets/page20_img1.jpeg" alt="Three cells A B C with different water potentials showing direction of net water flow"/>
+<figcaption class="fig-caption">Fig 12 · Net water flows from higher ψ toward lower ψ: B (−1) → A (−3) and B → C (−6); also A → C.</figcaption>
+</figure>
+
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile mb-4">Applied examples (from notes)</h3>
+<div class="space-y-4 text-body-sm">
+<div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20">
+<strong class="text-primary">Beetroot cylinder</strong>
+<ul class="mt-2 text-on-surface-variant space-y-1 list-disc list-inside">
+<li><strong>Setup A</strong> (intact membrane + distilled water): differentially permeable ✔, ψ difference ✔ → osmosis <strong>yes</strong>; net water <strong>into</strong> cylinder (▶) → cylinder becomes <strong>longer, heavier, less dense</strong></li>
+<li><strong>Setup B</strong> (“juice leaked”, damaged membrane): osmosis <strong>no</strong> — membrane no longer differentially permeable</li>
+<li>ψ of distilled water: <strong>0 / highest</strong>; ψ of beet root cells: <strong>negative</strong></li>
+</ul>
+<figure class="fig-box mt-4">
+<img src="./assets/page20_img2.jpeg" alt="Beetroot cylinder in distilled water — Setup A 0°C clear vs Setup B 70°C red pigment leaked"/>
+<figcaption class="fig-caption">Fig 13 · Setup A (0°C): membrane intact, water stays clear. Setup B (70°C): membrane damaged → red pigment leaks (“juice leaked”).</figcaption>
+</figure>
+</div>
+<div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20">
+<strong class="text-primary">Egg without shell (membrane only)</strong>
+<ul class="mt-2 text-on-surface-variant space-y-1 list-disc list-inside">
+<li><strong>Concentrated salt solution</strong> (lower ψ): water moves <strong>out</strong> → egg <strong>shrinks</strong></li>
+<li><strong>Tap water</strong> (higher ψ): water moves <strong>in</strong> → egg <strong>expands</strong></li>
+<li>Shell removed because shell is not permeable to water</li>
+</ul>
+<div class="fig-box mt-4 space-y-4">
+<figure>
+<img src="./assets/page21_img2.jpeg" alt="Decalcified eggs in two beakers — one egg sunk, one floating after osmosis in different solutions"/>
+<figcaption class="fig-caption">Photo — shell removed; compare egg size and position in each solution.</figcaption>
+</figure>
+<figure>
+<img src="./assets/page21_img1.jpeg" alt="Diagram: salt water high concentration vs fresh water low concentration — water out vs water in"/>
+<figcaption class="fig-caption">Fig 14 · <strong>Salt water</strong> (high solute conc., lower ψ outside): water moves <strong>out</strong> → egg shrinks. <strong>Fresh water</strong> (low solute conc., higher ψ): water moves <strong>in</strong> → egg swells.</figcaption>
+</figure>
+</div>
+</div>
+<div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20">
+<strong class="text-primary">Red blood cells in sucrose solutions</strong>
+<p class="mt-2 text-on-surface-variant">Sucrose concentration order (notes): <strong>B &gt; A &gt; C</strong>. B = crenation (hypertonic); A = normal; C = swelling/haemolysis (hypotonic).</p>
+<figure class="fig-box mt-4">
+<img src="./assets/page22_img1.jpeg" alt="RBC in sucrose solutions A normal B crenated C swollen or haemolysed"/>
+<figcaption class="fig-caption">Fig 15 · RBC: A normal · B crenated (highest sucrose) · C swollen/haemolysed (lowest sucrose).</figcaption>
+</figure>
+</div>
+<div class="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/20">
+<strong class="text-primary">Visking tubing</strong>
+<p class="mt-2 text-on-surface-variant">X inside tubing, Y outside. Mass of the tubing: 12.0 g → 9.5 g means water left tubing → outside more concentrated (e.g. X 10% sucrose, Y 5% sucrose).</p>
+<figure class="fig-box mt-4">
+<img src="./assets/page22_img2.png" alt="Visking tubing dialysis experiment setup with solution X and Y"/>
+<figcaption class="fig-caption">Fig 16 · Dialysis tubing — solution X inside, solution Y outside.</figcaption>
+</figure>
+<strong class="text-primary block mt-6">Potato tissue experiments</strong>
+<p class="mt-2 mb-4 text-on-surface-variant text-body-sm"><strong>Fig 17 · Length experiment:</strong> Equal 5&nbsp;cm long peeled potato strips were soaked in salt solutions (0.0–0.6 arbitrary units) for 2&nbsp;hours; in hypertonic solutions water leaves by osmosis so strips become <strong>shorter and flaccid</strong>, while in hypotonic solutions water enters so strips stay longer or turgid.
+The mean length is unchanged at about <strong>0.3 arbitrary units</strong> of salt — the isotonic point where there is no net water movement (same water potential as the potato tissue).</p>
+<div class="fig-grid fig-grid-2 mt-2">
+<figure class="fig-box">
+<img src="./assets/page25_img1.jpeg" alt="Potato strips in salt solutions of increasing concentration — turgid to flaccid"/>
+<figcaption class="fig-caption">Strips after 2&nbsp;h in rising salt concentration.</figcaption>
+</figure>
+<figure class="fig-box fig-graph">
+<img src="./assets/page25_img2.png" alt="Bar chart of potato strip mean length vs salt concentration"/>
+<figcaption class="fig-caption">Mean length (cm) vs salt conc. — isotonic ≈ <strong>0.3</strong> arbitrary units.</figcaption>
+</figure>
+</div>
+<figure class="fig-box fig-graph mt-6">
+<img src="./assets/page24_img1.jpeg" alt="Graph of percentage mass change of potato vs salt concentration with isotonic point about 5.8 percent"/>
+<figcaption class="fig-caption">Fig 18 · % mass change vs salt % — isotonic ≈ <strong>5.8%</strong>.</figcaption>
+</figure>
+</div>
+<div class="p-5 rounded-2xl bg-secondary/5 border border-secondary/15">
+<strong class="text-secondary">Digestive system — water follows solute</strong>
+<p class="mt-2 text-on-surface-variant">Most water absorption: <strong>large intestine 大腸</strong>.</p>
+<figure class="fig-box mt-4">
+<img src="./assets/page23_img1.jpeg" alt="Human digestive system diagram numbered 1 to 6"/>
+<figcaption class="fig-caption">Fig 20 · Digestive tract — large intestine (5) absorbs the <strong>most</strong> water.</figcaption>
+</figure>
+</div>
+</div>
+
+<div class="mt-6 p-4 rounded-xl bg-tertiary/5 border border-tertiary/20 text-body-sm flex gap-2">
+<span class="material-symbols-outlined text-tertiary">science</span>
+<p class="text-on-surface-variant"><strong>Solute does not cross</strong> the membrane in osmosis — only water net movement. When ψ is equal on both sides, osmosis stops (individual water molecules still move both ways).</p>
+</div>
+</section>
+
+<!-- 10. Active transport -->
+<section class="mb-16 topic-pill" id="active">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Active transport 主動運輸</h2>
+<p class="text-on-surface-variant text-body-sm mb-4">
+  Uses <strong>energy from respiration 呼吸作用</strong> (ATP) to change the shape of <strong>carrier proteins 載體蛋白</strong> and move substances in the direction the cell needs — often <strong>against</strong> the concentration gradient.
+</p>
+<div class="rounded-3xl overflow-hidden glass-frost border border-white/40 shadow-xl overflow-x-auto mb-4">
+<table class="w-full text-left border-collapse text-body-sm min-w-[560px]">
+<thead>
+<tr class="bg-secondary/10">
+<th class="p-3 font-label-bold text-secondary">Soil nutrient vs root cell</th>
+<th class="p-3 font-label-bold text-secondary">Diffusion</th>
+<th class="p-3 font-label-bold text-secondary">Active transport</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3">Soil nutrient conc. &gt; cell (along gradient)</td>
+<td class="p-3 text-on-surface-variant">✔ possible</td>
+<td class="p-3 text-on-surface-variant">✔ (can also occur)</td>
+</tr>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3">Soil nutrient conc. = cell</td>
+<td class="p-3 text-on-surface-variant">✘ no gradient</td>
+<td class="p-3 text-on-surface-variant">✔ still possible</td>
+</tr>
+<tr class="border-b border-outline-variant/10">
+<td class="p-3">Soil nutrient conc. &lt; cell (against gradient)</td>
+<td class="p-3 text-on-surface-variant">✘</td>
+<td class="p-3 text-on-surface-variant">✔ required</td>
+</tr>
+<tr>
+<td class="p-3">Soil nutrient conc. &gt; cell + cyanide (respiration inhibitor)</td>
+<td class="p-3 text-on-surface-variant">Unaffected</td>
+<td class="p-3 text-on-surface-variant">✘ stops — no energy</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-4">Example: absorption of <strong>nitrates</strong> into root hair cells when soil concentration is low.</p>
+<div class="fig-grid fig-grid-2">
+<figure class="fig-box fig-tall">
+<img src="./assets/page33_img1.jpeg" alt="Active transport: carrier protein shape change powered by respiration energy"/>
+<figcaption class="fig-caption">Carrier protein — energy from respiration changes shape to pump molecules across the membrane.</figcaption>
+</figure>
+<figure class="fig-box fig-tall">
+<img src="./assets/page33_img2.jpeg" alt="Root hair active transport — nitrates from low concentration in soil to high concentration in root hair"/>
+<figcaption class="fig-caption">Root hair — conc. of nitrates in soil <strong>low</strong>, inside root hair <strong>high</strong>; <strong>active transport</strong> moves nitrates against the gradient.</figcaption>
+</figure>
+</div>
+<p class="fig-caption mt-2">Fig 21 · Active transport (e.g. nitrates in root hairs when soil concentration is low) — requires carrier proteins and energy from respiration; stops if respiration is inhibited (e.g. cyanide).</p>
+</section>
+
+<!-- 11. Phagocytosis -->
+<section class="mb-16 topic-pill" id="phagocytosis">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Phagocytosis 吞噬作用</h2>
+<p class="text-on-surface-variant text-body-sm mb-6">
+  Engulfing 吞噬 large particles/food. Uses energy for <strong>membrane folding 膜折疊</strong>, enabled by membrane <strong>fluidity 流動性</strong>.
+  Typical cargo: <strong>proteins</strong> and large particles (too large to transport by diffusion/active transport) — not glucose, O₂, or small ions (those use diffusion/active transport).
+</p>
+<ol class="space-y-4">
+<li class="flex gap-4 items-start"><span class="step-num">1</span><span class="text-body-sm text-on-surface-variant"><strong>Infolding 內陷</strong> of membrane → <strong>pseudopodia 偽足</strong> surround particle</span></li>
+<li class="flex gap-4 items-start"><span class="step-num">2</span><span class="text-body-sm text-on-surface-variant">Particle is <strong>engulfed 吞噬</strong></span></li>
+<li class="flex gap-4 items-start"><span class="step-num">3</span><span class="text-body-sm text-on-surface-variant">Enclosed in <strong>vacuole 液泡 / vesicle 囊泡</strong> inside cell</span></li>
+<li class="flex gap-4 items-start"><span class="step-num">4</span><span class="text-body-sm text-on-surface-variant"><strong>Lysosome 溶酶體</strong> (enzymes 酶) fuses with vacuole → catalyze digestion of the particle</span></li>
+<li class="flex gap-4 items-start"><span class="step-num">5</span><span class="text-body-sm text-on-surface-variant">Digested products <strong>diffuse 擴散</strong> into cytoplasm</span></li>
+</ol>
+<div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-body-sm">
+<div class="p-4 rounded-xl bg-primary/5"><strong>Examples:</strong> Amoeba feeding; WBC engulfing bacteria; removal of dead cells</div>
+<div class="p-4 rounded-xl bg-tertiary/5"><strong>Not phagocytosis:</strong> O₂ transport, intestinal glucose absorption</div>
+</div>
+<div class="fig-grid fig-grid-2 mt-6">
+<figure class="fig-box fig-tall">
+<img src="./assets/page34_img1.jpeg" alt="Phagocytosis steps: pseudopodia, vacuole, lysosome fusion, digestion"/>
+<figcaption class="fig-caption">Fig 22 · Phagocytosis — pseudopodia → vacuole → lysosome enzymes → products diffuse out.</figcaption>
+</figure>
+<figure class="fig-box fig-tall">
+<img src="./assets/page35_img1.jpeg" alt="Amoeba engulfing food particle into food vacuole"/>
+<figcaption class="fig-caption">Fig 23 · Amoeba feeding — engulfing needs membrane <strong>fluidity</strong> (not movement toward food alone).</figcaption>
+</figure>
+</div>
+</section>
+
+<!-- Exam tips -->
+<section class="mb-12 topic-pill" id="exam-tips">
+<div class="relative p-10 bg-surface-container-lowest rounded-3xl border border-outline-variant/20">
+<h2 class="font-headline-lg text-headline-lg mb-6 text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">school</span> HKDSE exam checklist
+</h2>
+<ul class="exam-checklist space-y-3.5 text-body-sm text-on-surface-variant">
+<li>
+<span class="material-symbols-outlined text-secondary text-lg" aria-hidden="true">check_circle</span>
+<span class="checklist-text">Say <strong>“net movement”</strong> for osmosis and diffusion; molecules still move both ways.</span>
+</li>
+<li>
+<span class="material-symbols-outlined text-secondary text-lg" aria-hidden="true">check_circle</span>
+<span class="checklist-text">Osmosis needs a <strong>differentially permeable</strong> membrane and a <strong>water potential</strong> difference (notes: 差異滲透性; avoid “semi-permeable” alone).</span>
+</li>
+<li>
+<span class="material-symbols-outlined text-secondary text-lg" aria-hidden="true">check_circle</span>
+<span class="checklist-text"><strong>Channel</strong> = open pore; <strong>carrier</strong> = shape change (uses energy if active transport).</span>
+</li>
+<li>
+<span class="material-symbols-outlined text-secondary text-lg" aria-hidden="true">check_circle</span>
+<span class="checklist-text">Water moves <strong>high ψ → low ψ</strong> (toward more solute / lower water potential).</span>
+</li>
+<li>
+<span class="material-symbols-outlined text-secondary text-lg" aria-hidden="true">check_circle</span>
+<span class="checklist-text">Damaged membrane (“juice leaked”) → no longer differentially permeable.</span>
+</li>
+<li>
+<span class="material-symbols-outlined text-secondary text-lg" aria-hidden="true">check_circle</span>
+<span class="checklist-text"><strong>Phagocytosis</strong> needs membrane <strong>fluidity</strong> (folding). Amoeba MCQ: (2) and (3), not (1) alone.</span>
+</li>
+<li>
+<span class="material-symbols-outlined text-secondary text-lg" aria-hidden="true">check_circle</span>
+<div class="checklist-body">
+<span class="checklist-text">RBC sucrose order: <strong>B &gt; A &gt; C</strong> (descending concentration).</span>
+<figure class="fig-box">
+<img src="./assets/page22_img1.jpeg" alt="Red blood cells in sucrose solutions A normal, B crenated, C swollen or haemolysed"/>
+<figcaption class="fig-caption">Sucrose solution A — normal appearance · B — crenated (highest concentration) · C — swollen/haemolysed (lowest concentration).</figcaption>
+</figure>
+</div>
+</li>
+<li>
+<span class="material-symbols-outlined text-secondary text-lg" aria-hidden="true">check_circle</span>
+<span class="checklist-text">Potato isotonic point: ~<strong>5.8%</strong> salt (mass graph) or <strong>0.3</strong> arbitrary units (length graph).</span>
+</li>
+</ul>
+</div>
+</section>
+
+<section class="no-export flex flex-col items-center py-12 bg-surface-container-low rounded-[40px] border border-dashed border-outline-variant gap-4">
+<p class="text-on-surface-variant text-body-sm text-center max-w-md">Use the download bar above for <strong>Word (.doc)</strong> or <strong>Print / Save PDF</strong>. Word includes diagrams where possible.</p>
+<a class="px-8 py-3 bg-primary text-on-primary rounded-full font-label-bold hover:scale-105 transition-transform" href="#top">Back to top</a>
+</section>
+
+</main>
+
+<script>
+const observerOptions = { threshold: 0.08 };
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('opacity-100', 'translate-y-0');
+      entry.target.classList.remove('opacity-0', 'translate-y-8');
+    }
+  });
+}, observerOptions);
+        document.querySelectorAll('section').forEach(s => {
+            s.classList.add('transition-all', 'duration-700', 'translate-y-4');
+            revealObserver.observe(s);
+        });
+        // Show all sections on load so figures/diagrams are visible without scrolling first
+        requestAnimationFrame(() => {
+            document.querySelectorAll('section').forEach(s => {
+                s.classList.add('opacity-100', 'translate-y-0');
+            });
+        });
+</script>
+<script src="./download-export.js"></script>
+</body>
+</html>

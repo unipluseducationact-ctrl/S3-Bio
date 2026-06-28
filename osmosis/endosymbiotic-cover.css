@@ -1,0 +1,135 @@
+/* Endosymbiotic Theory — preview card in Interactive Tools hub */
+
+.chem-tool-card--endo-cover {
+  border-color: rgba(124, 58, 237, 0.28);
+  box-shadow:
+    0 4px 20px rgba(30, 20, 50, 0.1),
+    inset 0 2px 0 rgba(255, 255, 255, 0.55);
+}
+
+.chem-tool-card--endo-cover:hover {
+  border-color: rgba(124, 58, 237, 0.45);
+  box-shadow:
+    0 16px 32px -8px rgba(30, 20, 50, 0.18),
+    0 0 0 1px rgba(124, 58, 237, 0.22);
+}
+
+.chem-tool-thumb--endo {
+  border: 2px solid rgba(124, 58, 237, 0.32);
+  background: linear-gradient(165deg, #faf8f5 0%, #f3efe8 48%, #ebe4da 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+html.dark-theme .chem-tool-thumb--endo {
+  background: linear-gradient(165deg, #1a1620 0%, #221c28 100%);
+  border-color: rgba(167, 139, 250, 0.35);
+}
+
+.endo-cover-preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  flex: 1 1 auto;
+  overflow: hidden;
+  border-radius: inherit;
+  background: #fff;
+}
+
+.endo-cover-hero {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.endo-cover-badge {
+  position: absolute;
+  top: clamp(10px, 1.5vw, 14px);
+  right: clamp(10px, 1.5vw, 14px);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-family: var(--bio-font-mono);
+  font-size: clamp(0.62rem, 1.1vh, 0.72rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #3b2a5c;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+html.dark-theme .endo-cover-badge {
+  color: #e9e0ff;
+  background: rgba(20, 16, 28, 0.82);
+  border-color: rgba(167, 139, 250, 0.4);
+}
+
+.endo-cover-badge::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #7c3aed;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3);
+  animation: endo-cover-pulse 1.6s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .endo-cover-badge::before {
+    animation: none;
+  }
+}
+
+@keyframes endo-cover-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(124, 58, 237, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 58, 237, 0);
+  }
+}
+
+.chem-tool-card--endo-cover .chem-tool-info {
+  gap: clamp(6px, 1vh, 10px);
+  text-align: center;
+  align-items: center;
+}
+
+.chem-tool-card--endo-cover .chem-tool-desc {
+  font-size: clamp(0.82rem, 1.5vh, 0.95rem);
+  line-height: 1.55;
+  text-align: center;
+  max-width: 36em;
+  margin-inline: auto;
+}
+
+.endo-cover-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+  font-size: clamp(0.8rem, 1.4vh, 0.9rem);
+  font-weight: 700;
+  color: #6d28d9;
+  letter-spacing: 0.02em;
+}
+
+html.dark-theme .endo-cover-cta {
+  color: #c4b5fd;
+}
+
+.chem-tool-card--endo-cover:hover .endo-cover-cta {
+  color: #7c3aed;
+}

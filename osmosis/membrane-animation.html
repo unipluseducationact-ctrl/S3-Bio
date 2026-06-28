@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Bilingual Membrane Transport 3D Model</title>
+    <style>
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #03080c;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Noto Sans SC", "Microsoft JhengHei", sans-serif;
+            color: #fff;
+            user-select: none;
+        }
+        #canvas-container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        #canvas-container canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+        #panel-toggle-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            z-index: 20;
+            background: rgba(6, 18, 30, 0.95);
+            color: #4cc9f0;
+            border: 1px solid #3a86ff;
+            padding: 10px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        #panel-toggle-btn:hover { background: #1a436d; transform: translateY(-1px); }
+        #ui-panel {
+            position: absolute;
+            top: 64px;
+            left: 16px;
+            background: rgba(6, 18, 30, 0.92);
+            padding: 18px 22px;
+            border-radius: 12px;
+            border: 1px solid #1a365d;
+            max-width: min(360px, calc(100vw - 32px));
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+            pointer-events: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            z-index: 15;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        #ui-panel.collapsed {
+            opacity: 0;
+            transform: translateX(-12px);
+            pointer-events: none;
+        }
+        h1 { font-size: 1.2rem; margin: 0 0 5px 0; color: #4cc9f0; }
+        h1 var { font-style: normal; font-size: 0.95rem; color: #8899a6; display: block; margin-top: 2px; }
+        .btn-group { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; margin-bottom: 12px; }
+        button {
+            background: #102a45;
+            color: #fff;
+            border: 1px solid #3a86ff;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-align: left;
+            line-height: 1.4;
+            transition: all 0.2s ease;
+        }
+        button:hover { background: #1a436d; border-color: #00f5d4; }
+        button.active { background: #3a86ff; border-color: #00f5d4; font-weight: bold; }
+        #transport-tip { font-size: 0.82rem; color: #b0bec5; line-height: 1.5; border-top: 1px solid #1a365d; padding-top: 10px; min-height: 50px; }
+        
+        #info-card {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(6, 18, 30, 0.96);
+            padding: 22px 32px;
+            border-radius: 12px;
+            border: 2px solid #00f5d4;
+            width: 85%;
+            max-width: 600px;
+            pointer-events: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            display: none;
+            z-index: 30;
+        }
+        #info-card h2 { margin: 0 0 10px 0; color: #00f5d4; font-size: 1.25rem; border-bottom: 1px solid rgba(0,245,212,0.2); padding-bottom: 5px; }
+        #info-card p { margin: 0; font-size: 0.9rem; line-height: 1.55; color: #cfd8dc; }
+        #info-card .zh-section { margin-top: 8px; color: #a9b7c6; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px; }
+        #info-card .close-btn { position: absolute; top: 12px; right: 18px; color: #ff006e; cursor: pointer; font-weight: bold; font-size: 1.3rem; }
+    </style>
+    <link rel="stylesheet" href="./embed.css">
+    <script src="./embed.js"></script>
+    <link rel="stylesheet" href="./draw-tool.css">
+    <script src="./draw-tool.js" defer></script>
+    <script src="./tool-back.js" data-variant="dark" data-position="top-right"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <button id="panel-toggle-btn" type="button" aria-expanded="true" aria-controls="ui-panel">
+        <span id="panel-toggle-icon">◀</span>
+        <span id="panel-toggle-label">Hide controls / 收起控制面板</span>
+    </button>
+
+    <div id="ui-panel">
+        <h1>Membrane Transport <var>跨膜運輸動態模擬</var></h1>
+        <div class="btn-group">
+            <button id="btn-none" class="active" onclick="setTransportMode('none')">⏸ Stop Particles / 停止分子運動</button>
+            <button id="btn-nonpolar" onclick="setTransportMode('nonpolar')">🔵 Small, Non-Polar Molecules / 非極性小分子<br><small>(e.g., Oxygen, Carbon Dioxide, Fatty acids)</small></button>
+            <button id="btn-polar" onclick="setTransportMode('polar')">🔴 Small Polar Molecules & Ions / 極性小分子與離子<br><small>(e.g., Water, Glucose, Sodium, Calcium)</small></button>
+            <button id="btn-large" onclick="setTransportMode('large')">🟢 Large Molecules / 大分子<br><small>(e.g., Starch, Proteins, Triglycerides)</small></button>
+        </div>
+        <div id="transport-tip">Click buttons above to simulate paths. / 請點擊上方按鈕觀察跨膜運輸路徑。</div>
+    </div>
+
+    <div id="info-card">
+        <span class="close-btn" onclick="document.getElementById('info-card').style.display='none'">×</span>
+        <h2 id="card-title">Structure Title</h2>
+        <div id="card-content">
+            <p id="card-text-en"></p>
+            <p id="card-text-zh" class="zh-section"></p>
+        </div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script>
+        // --- 1. INITIALIZATION & SCENE SETUP ---
+        const container = document.getElementById('canvas-container');
+        const uiPanel = document.getElementById('ui-panel');
+        const panelToggleBtn = document.getElementById('panel-toggle-btn');
+        const panelToggleIcon = document.getElementById('panel-toggle-icon');
+        const panelToggleLabel = document.getElementById('panel-toggle-label');
+        let panelOpen = true;
+
+        function resizeRenderer() {
+            const w = container.clientWidth || window.innerWidth;
+            const h = container.clientHeight || window.innerHeight;
+            if (!w || !h) return;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        }
+
+        function isUiHit(event) {
+            const target = event.target;
+            if (!target) return false;
+            if (target.closest('#ui-panel, #panel-toggle-btn, #info-card, .btn-group')) return true;
+            return false;
+        }
+
+        function resolveStructureId(object) {
+            let current = object;
+            while (current) {
+                if (current.userData && current.userData.id) return current.userData.id;
+                current = current.parent;
+            }
+            return null;
+        }
+
+        function showStructureInfo(id) {
+            const data = structuralNotes[id];
+            if (!data) return;
+            document.getElementById('card-title').innerText = data.title;
+            document.getElementById('card-text-en').innerText = data.en;
+            document.getElementById('card-text-zh').innerText = data.zh;
+            document.getElementById('info-card').style.display = 'block';
+        }
+
+        function pickStructureAtClient(clientX, clientY) {
+            const canvas = renderer.domElement;
+            const rect = canvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+
+            mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            raycaster.params.Line = { threshold: 0.35 };
+            raycaster.params.Points = { threshold: 0.2 };
+
+            const intersections = raycaster.intersectObjects(interactiveTargets, true);
+            for (let i = 0; i < intersections.length; i++) {
+                const id = resolveStructureId(intersections[i].object);
+                if (id) {
+                    showStructureInfo(id);
+                    return;
+                }
+            }
+        }
+
+        panelToggleBtn.addEventListener('click', () => {
+            panelOpen = !panelOpen;
+            uiPanel.classList.toggle('collapsed', !panelOpen);
+            panelToggleBtn.setAttribute('aria-expanded', String(panelOpen));
+            panelToggleIcon.textContent = panelOpen ? '◀' : '▶';
+            panelToggleLabel.textContent = panelOpen
+                ? 'Hide controls / 收起控制面板'
+                : 'Show controls / 打開控制面板';
+            requestAnimationFrame(resizeRenderer);
+        });
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x03080c);
+        scene.fog = new THREE.FogExp2(0x03080c, 0.012);
+
+        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+        camera.position.set(0, 22, 48);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+        resizeRenderer();
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 - 0.01;
+
+        // --- 2. LIGHTING LAYOUT ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+        scene.add(ambientLight);
+        const topLight = new THREE.DirectionalLight(0xffffff, 1.1);
+        topLight.position.set(10, 40, 15);
+        scene.add(topLight);
+        const rimLight = new THREE.DirectionalLight(0x3a86ff, 0.4);
+        rimLight.position.set(-20, 5, -20);
+        scene.add(rimLight);
+
+        // --- 3. BILINGUAL NOTE DATABASE ---
+        const structuralNotes = {
+            phospholipid: {
+                title: "Phospholipid Bilayer / 磷脂雙層",
+                en: "Forms the basic structure of the cell membrane. It is fluid and moves laterally together with embedded proteins, inferring flexibility. Contains polar hydrophilic heads facing aqueous environments and non-polar hydrophobic fatty acid tails facing inwards 'tail-to-tail'. Acts as a barrier controlling materials.",
+                zh: "構成細胞膜的基本結構。具有流動性，磷脂分子可與嵌入的蛋白質一起進行橫向移動，使膜富有彈性。包含面向外部水性環境的親水性極性頭部（磷酸基團）和面向內部「尾對尾」排布的疏水性非極性脂肪酸尾部。作為控制物質進出的屏障。"
+            },
+            channel: {
+                title: "Channel Protein / 通道蛋白",
+                en: "Provides open water-filled channels/pores for water-soluble, polar molecules and small charged ions (e.g., Sodium, Calcium) to cross the membrane along their concentration gradient without requiring metabolic energy.",
+                zh: "為水溶性、極性分子以及帶電荷的小離子（例如：鈉離子、鈣離子）提供順著濃度梯度跨越細胞膜的開放式水通道/孔洞。此運輸過程不改變蛋白質形狀，也不需要消耗呼吸作用產生的能量。"
+            },
+            carrier: {
+                title: "Carrier Protein / 載體蛋白 (輸運蛋白)",
+                en: "Transports specific larger substances (e.g., glucose, amino acids) across the membrane by undergoing conformation shape changes. Can transport substances against the concentration gradient via active transport using respiratory energy.",
+                zh: "藉由蛋白質構象（形狀）的改變，來跨膜運輸特定的較大極性物質（例如：葡萄糖、胺基酸）。當進行逆濃度梯度的「主動運輸」時，需要消耗由細胞呼吸作用提供的能量。"
+            },
+            glycoprotein: {
+                title: "Glycoprotein / 糖蛋白",
+                en: "Composed of a protein molecule embedded in the mosaic layer covalently bound to a branched carbohydrate glycan chain on the extracellular surface. Acts like an 'ID Card' or antigen for cellular identification and immune recognition.",
+                zh: "由嵌入膜馬賽克層中的蛋白質分子與外側細胞表面延伸的支鏈碳水化合物（糖鏈）共價結合而成。如同細胞的「身份證」或抗原，用於細胞識別、免疫系統辨識和接收外部信號。"
+            },
+            receptor: {
+                title: "Receptor Protein / 受體蛋白",
+                en: "Acts like a secure 'Card Reader' embedded in the membrane mosaic plane. Binds to highly specific chemical messengers (such as hormones) arriving from outside the cell to regulate intracellular metabolic activities.",
+                zh: "如同嵌入在膜表面馬賽克平面上的「讀卡機」。能與來自細胞外的特異性化學信使（如激素、荷爾蒙）相結合，從而調節細胞內部的各種代謝與生理活動。"
+            }
+        };
+
+        const tipsData = {
+            none: "⏸ <strong>Simulation Paired / 分子運動已停止：</strong> Orbit with mouse, scroll to zoom, or click cyan arrows for structural notes. / 你可以使用滑鼠旋轉或縮放模型，點擊青色箭頭可查看膜結構筆記。",
+            nonpolar: "🔵 <strong>Diffusion / 自由擴散：</strong> Small, non-polar molecules (lipid-soluble) pass directly through the hydrophobic tail core gaps without protein help. / 非極性小分子（脂溶性）可直接穿過磷脂雙分子層的疏水尾部間隙進行擴散，不需要膜蛋白協助。",
+            polar: "🔴 <strong>Protein-Assisted Transport / 蛋白質轉運：</strong> Polar molecules and ions cannot pass the lipid core; they must transit through central open pores of channel or carrier proteins. / 帶電荷的離子或極性小分子無法穿過疏水尾部，必須通過通道蛋白或載體蛋白的中央開放通道穿越膜層。",
+            large: "🟢 <strong>Large Molecules Blocked / 大分子受阻：</strong> Macromolecules are too large to directly cross the bilayer and are physically bounced back. They require <strong>Membrane Folding</strong> (endocytosis/exocytosis). / 大分子體積過大，會被磷脂雙層直接阻擋並彈開，必須依靠細胞膜的<strong>膜折疊作用 (Membrane folding)</strong> 進行內吞或外排。"
+        };
+
+        // --- 4. MODEL DESIGN & BIOLAYER GENERATION ---
+        const membraneGroup = new THREE.Group();
+        scene.add(membraneGroup);
+
+        const headMat = new THREE.MeshPhongMaterial({ color: 0x2196f3, shininess: 35 });
+        const tailMat = new THREE.MeshPhongMaterial({ color: 0xffb300, shininess: 5 });
+        const channelMat = new THREE.MeshStandardMaterial({ color: 0x9c27b0, roughness: 0.4, side: THREE.DoubleSide });
+        const carrierMat = new THREE.MeshStandardMaterial({ color: 0xe91e63, roughness: 0.4, side: THREE.DoubleSide });
+        const receptorMat = new THREE.MeshStandardMaterial({ color: 0x00d6a0, roughness: 0.4 });
+        const glyMat = new THREE.MeshStandardMaterial({ color: 0x00b0ff, roughness: 0.4 });
+        const glycanMat = new THREE.MeshPhongMaterial({ color: 0x00e676, shininess: 40 });
+
+        function createTailGeo() {
+            const points = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, -0.6, 0), new THREE.Vector3(0.12, -1.3, 0), new THREE.Vector3(0.2, -2.1, 0)];
+            return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), 8, 0.07, 6, false);
+        }
+        const tailGeo = createTailGeo();
+        const headGeo = new THREE.SphereGeometry(0.5, 16, 16);
+
+        const rows = 26, cols = 26, spacing = 1.9;
+        const lipidsArray = [];
+        const interactiveTargets = [];
+        const dynamicProteins = [];
+        const proteinWorldPositions = []; 
+
+        const proteinMap = [
+            { r: 6,  c: 7,  type: 'channel', rad: 1.6, angle: 0 },
+            { r: 7,  c: 19, type: 'channel', rad: 1.6, angle: 0 },
+            { r: 18, c: 6,  type: 'channel', rad: 1.6, angle: 0 },
+            { r: 15, c: 15, type: 'carrier', rad: 1.6, angle: 0 },
+            { r: 8,  c: 13, type: 'carrier', rad: 1.6, angle: 0 }, 
+            { r: 19, c: 18, type: 'glycoprotein', rad: 1.5, angle: 0 },
+            { r: 13, c: 8,  type: 'glycoprotein', rad: 1.5, angle: 0 },
+            { r: 12, c: 20, type: 'receptor', rad: 1.5, angle: 0 },
+            { r: 24, c: 11, type: 'carrier', rad: 1.6, isCutout: true },
+            { r: 24, c: 18, type: 'channel', rad: 1.6, isCutout: true }
+        ];
+
+        function checkProteinHole(i, j) {
+            for (let p of proteinMap) {
+                let distance = Math.sqrt(Math.pow(i - p.r, 2) + Math.pow(j - p.c, 2));
+                if (distance < p.rad * 1.25) return true;
+            }
+            return false;
+        }
+
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                if (checkProteinHole(i, j)) continue;
+                if (i === rows - 1) continue; 
+
+                const x = (i - rows/2) * spacing;
+                const z = (j - cols/2) * spacing;
+
+                const topUnit = new THREE.Group();
+                const hTop = new THREE.Mesh(headGeo, headMat); hTop.position.y = 2.1;
+                const t1Top = new THREE.Mesh(tailGeo, tailMat); t1Top.position.set(-0.16, 2.1, 0);
+                const t2Top = new THREE.Mesh(tailGeo, tailMat); t2Top.position.set(0.16, 2.1, 0); t2Top.rotation.y = Math.PI;
+                topUnit.add(hTop, t1Top, t2Top);
+                topUnit.position.set(x, 0, z);
+                membraneGroup.add(topUnit);
+
+                const botUnit = new THREE.Group();
+                const hBot = new THREE.Mesh(headGeo, headMat); hBot.position.y = -2.1;
+                const t1Bot = new THREE.Mesh(tailGeo, tailMat); t1Bot.position.set(-0.16, -2.1, 0); t1Bot.rotation.x = Math.PI;
+                const t2Bot = new THREE.Mesh(tailGeo, tailMat); t2Bot.position.set(0.16, -2.1, 0); t2Bot.rotation.set(Math.PI, Math.PI, 0);
+                botUnit.add(hBot, t1Bot, t2Bot);
+                botUnit.position.set(x, 0, z);
+                membraneGroup.add(botUnit);
+
+                hTop.userData = { id: "phospholipid" };
+                hBot.userData = { id: "phospholipid" };
+                interactiveTargets.push(hTop, hBot);
+
+                let seed = i * 0.15 + j * 0.45;
+                lipidsArray.push({ obj: topUnit, s: seed, rx: x, rz: z, by: 0 });
+                lipidsArray.push({ obj: botUnit, s: seed + 5, rx: x, rz: z, by: 0 });
+            }
+        }
+
+        // --- 5. HIGH-FIDELITY PROTEIN GEOMETRIES ---
+        function generateHollowCylinder(height, outRad, inRad, cutHalf = false) {
+            const shape = new THREE.Shape();
+            shape.absarc(0, 0, outRad, 0, cutHalf ? Math.PI : Math.PI * 2, false);
+            const hole = new THREE.Path();
+            hole.absarc(0, 0, inRad, 0, cutHalf ? Math.PI : Math.PI * 2, true);
+            shape.holes.push(hole);
+
+            const geo = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: true, bevelSize: 0.04, steps: 1 });
+            geo.center(); geo.rotateX(Math.PI / 2);
+            if (cutHalf) geo.rotateY(-Math.PI / 2); 
+            return geo;
+        }
+
+        proteinMap.forEach(p => {
+            const px = (p.r - rows/2) * spacing;
+            const pz = (p.c - cols/2) * spacing;
+            let pMesh;
+
+            if (p.type === 'channel' || p.type === 'carrier') {
+                const mat = (p.type === 'channel') ? channelMat : carrierMat;
+                const geo = generateHollowCylinder(4.1, p.rad * 0.9, p.rad * 0.45, p.isCutout);
+                pMesh = new THREE.Mesh(geo, mat);
+                pMesh.userData = { id: p.type };
+                if (p.type === 'channel' || p.type === 'carrier') {
+                    proteinWorldPositions.push({ x: px, z: pz });
+                }
+            } else if (p.type === 'glycoprotein') {
+                pMesh = new THREE.Mesh(new THREE.SphereGeometry(p.rad * 0.9, 24, 24), glyMat);
+                pMesh.scale.set(1, 1.2, 1);
+                const sugars = new THREE.Group(); sugars.position.set(0, 0.9, 0);
+                const sugarGeo = new THREE.BoxGeometry(0.32, 0.32, 0.32);
+                let sy = 0;
+                for (let k = 0; k < 4; k++) {
+                    const m = new THREE.Mesh(sugarGeo, glycanMat);
+                    sy += 0.38; m.position.set(Math.sin(k) * 0.22, sy, 0);
+                    m.userData = { id: "glycoprotein" };
+                    sugars.add(m); interactiveTargets.push(m);
+                }
+                pMesh.add(sugars);
+                pMesh.userData = { id: "glycoprotein" };
+            } else if (p.type === 'receptor') {
+                pMesh = new THREE.Mesh(new THREE.CylinderGeometry(p.rad * 0.75, p.rad * 0.8, 3.9, 24), receptorMat);
+                const cleft = new THREE.Mesh(new THREE.SphereGeometry(p.rad * 0.42, 16, 16), new THREE.MeshBasicMaterial({color: 0x03080c}));
+                cleft.position.set(0, 2.0, 0); pMesh.add(cleft);
+                pMesh.userData = { id: "receptor" };
+            }
+
+            pMesh.position.set(px, 0, pz);
+            membraneGroup.add(pMesh);
+            interactiveTargets.push(pMesh);
+
+            if (!p.isCutout) {
+                dynamicProteins.push({ obj: pMesh, rx: px, rz: pz, s: p.r * 2.5 });
+            }
+        });
+
+        // Labelling Cyan Arrows
+        const labelTargets = [
+            { pos: new THREE.Vector3(12, 4.2, 12), dir: new THREE.Vector3(0, -1, 0), length: 1.4, id: "phospholipid" },
+            { pos: new THREE.Vector3(-14, 4.8, -5), dir: new THREE.Vector3(0, -1, 0), length: 1.4, id: "channel" },
+            { pos: new THREE.Vector3(13, 4.8, -8), dir: new THREE.Vector3(0, -1, 0), length: 1.4, id: "carrier" },
+            { pos: new THREE.Vector3(-8, 5.2, 8), dir: new THREE.Vector3(0, -1, 0), length: 1.6, id: "glycoprotein" },
+            { pos: new THREE.Vector3(14, 4.8, 14), dir: new THREE.Vector3(0, -1, 0), length: 1.4, id: "receptor" }
+        ];
+        labelTargets.forEach(target => {
+            const arrowHelper = new THREE.ArrowHelper(target.dir.normalize(), target.pos, target.length, 0x00f5d4, 0.4, 0.3);
+            arrowHelper.line.userData = { id: target.id }; arrowHelper.cone.userData = { id: target.id };
+            interactiveTargets.push(arrowHelper.line, arrowHelper.cone); scene.add(arrowHelper);
+        });
+
+        // --- 6. PARTICLE TRANSPORT ANIMATION ENGINE ---
+        let currentMode = 'none';
+        const particlesArray = [];
+        const particleGroup = new THREE.Group();
+        scene.add(particleGroup);
+
+        const nonpolarGeo = new THREE.SphereGeometry(0.15, 8, 8);
+        const nonpolarMat = new THREE.MeshBasicMaterial({ color: 0x4cc9f0 }); 
+
+        const polarGeo = new THREE.SphereGeometry(0.14, 8, 8);
+        const polarMat = new THREE.MeshBasicMaterial({ color: 0xff006e }); 
+
+        const largeGeo = new THREE.SphereGeometry(0.7, 16, 16);
+        const largeMat = new THREE.MeshStandardMaterial({ color: 0x00e676, roughness: 0.3 }); 
+
+        function setTransportMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${mode}`).classList.add('active');
+            document.getElementById('transport-tip').innerHTML = tipsData[mode];
+
+            while(particlesArray.length > 0) {
+                const p = particlesArray.pop();
+                particleGroup.remove(p.mesh);
+                p.mesh.geometry.dispose();
+            }
+        }
+
+        function spawnParticle() {
+            if (currentMode === 'none') return;
+
+            let mesh, type, speed, vx = 0, vz = 0, bounce = false;
+            let px = (Math.random() - 0.5) * 40;
+            let py = 10 + Math.random() * 2; 
+            let pz = (Math.random() - 0.5) * 40;
+
+            if (currentMode === 'nonpolar') {
+                mesh = new THREE.Mesh(nonpolarGeo, nonpolarMat);
+                type = 'nonpolar';
+                speed = 0.08 + Math.random() * 0.04;
+            } 
+            else if (currentMode === 'polar') {
+                mesh = new THREE.Mesh(polarGeo, polarMat);
+                type = 'polar';
+                speed = 0.09;
+                const targetGate = proteinWorldPositions[Math.floor(Math.random() * proteinWorldPositions.length)];
+                px = targetGate.x + (Math.random() - 0.5) * 4; 
+                pz = targetGate.z + (Math.random() - 0.5) * 4;
+                mesh.userData = { targetX: targetGate.x, targetZ: targetGate.z, state: 'approaching' };
+            } 
+            else if (currentMode === 'large') {
+                mesh = new THREE.Mesh(largeGeo, largeMat);
+                type = 'large';
+                speed = 0.06;
+                bounce = false; 
+            }
+
+            mesh.position.set(px, py, pz);
+            particleGroup.add(mesh);
+            particlesArray.push({ mesh: mesh, type: type, speed: speed, vx: vx, vz: vz, bounce: bounce });
+        }
+
+        setInterval(() => {
+            if (particlesArray.length < 120) {
+                spawnParticle();
+                if(currentMode !== 'none') spawnParticle(); 
+            }
+        }, 100);
+
+        function updateParticles() {
+            for (let i = particlesArray.length - 1; i >= 0; i--) {
+                const p = particlesArray[i];
+                
+                if (p.type === 'nonpolar') {
+                    p.mesh.position.y -= p.speed;
+                    p.mesh.position.x += Math.sin(p.mesh.position.y * 2) * 0.02;
+                } 
+                else if (p.type === 'polar') {
+                    const ud = p.mesh.userData;
+                    if (p.mesh.position.y > 2.5) {
+                        p.mesh.position.x += (ud.targetX - p.mesh.position.x) * 0.08;
+                        p.mesh.position.z += (ud.targetZ - p.mesh.position.z) * 0.08;
+                        p.mesh.position.y -= p.speed;
+                    } else {
+                        p.mesh.position.x = ud.targetX;
+                        p.mesh.position.z = ud.targetZ;
+                        p.mesh.position.y -= p.speed;
+                    }
+                } 
+                else if (p.type === 'large') {
+                    if (!p.bounce) {
+                        p.mesh.position.y -= p.speed;
+                        if (p.mesh.position.y <= 2.2) {
+                            p.bounce = true;
+                            p.speed = -p.speed * 0.8; 
+                        }
+                    } else {
+                        p.mesh.position.y -= p.speed;
+                    }
+                }
+
+                if (p.mesh.position.y < -8 || p.mesh.position.y > 14) {
+                    particleGroup.remove(p.mesh);
+                    particlesArray.splice(i, 1);
+                }
+            }
+        }
+
+        // --- 7. INTERACTION CLICK DETECTION ---
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const pointerDown = { x: 0, y: 0, time: 0 };
+        const PICK_DRAG_PX = 8;
+
+        renderer.domElement.addEventListener('pointerdown', (event) => {
+            pointerDown.x = event.clientX;
+            pointerDown.y = event.clientY;
+            pointerDown.time = performance.now();
+        });
+
+        renderer.domElement.addEventListener('pointerup', (event) => {
+            if (isUiHit(event)) return;
+
+            const dx = event.clientX - pointerDown.x;
+            const dy = event.clientY - pointerDown.y;
+            if (Math.hypot(dx, dy) > PICK_DRAG_PX) return;
+            if (performance.now() - pointerDown.time > 600) return;
+
+            pickStructureAtClient(event.clientX, event.clientY);
+        });
+
+        // --- 8. SIMULATION FLUIDITY LOOP ---
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = clock.getElapsedTime();
+
+            // Lipid layer fluid waves
+            lipidsArray.forEach(lipid => {
+                lipid.obj.position.y = lipid.by + Math.sin(time * 1.1 + lipid.s) * 0.12;
+                lipid.obj.position.x = lipid.rx + Math.sin(time * 0.35 + lipid.s) * 0.05;
+                lipid.obj.position.z = lipid.rz + Math.cos(time * 0.35 + lipid.s) * 0.05;
+            });
+
+            // Protein lateral matrix displacement
+            dynamicProteins.forEach(p => {
+                p.obj.position.y = Math.sin(time * 0.8 + p.s) * 0.05;
+                p.obj.position.x = p.rx + Math.sin(time * 0.25 + p.s) * 0.06;
+                p.obj.position.z = p.rz + Math.cos(time * 0.25 + p.s) * 0.06;
+            });
+
+            // Synchronize moving pore guides with transport particles
+            if (time % 0.5 < 0.02) {
+                proteinWorldPositions.length = 0;
+                dynamicProteins.forEach(p => {
+                    if (p.obj.userData.id === 'channel' || p.obj.userData.id === 'carrier') {
+                        proteinWorldPositions.push({ x: p.obj.position.x, z: p.obj.position.z });
+                    }
+                });
+            }
+
+            updateParticles();
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', resizeRenderer);
+        window.addEventListener('message', (event) => {
+            if (event.data === 'membrane-resize') requestAnimationFrame(resizeRenderer);
+        });
+        if (typeof ResizeObserver !== 'undefined') {
+            const ro = new ResizeObserver(() => requestAnimationFrame(resizeRenderer));
+            ro.observe(container);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

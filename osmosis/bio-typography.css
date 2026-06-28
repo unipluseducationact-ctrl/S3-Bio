@@ -1,0 +1,34 @@
+/* Shared typography — matches S3 Bio shell (css/base.css) */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --bio-font-sans:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Noto Sans TC",
+    "Noto Sans SC",
+    "Microsoft JhengHei",
+    sans-serif;
+  --bio-font-mono: "SF Mono", "Monaco", "Consolas", "Courier New", monospace;
+}
+
+html,
+body {
+  font-family: var(--bio-font-sans);
+}
+
+/* Tailwind custom font tokens used on osmosis pages */
+.font-headline-xl,
+.font-headline-lg,
+.font-headline-lg-mobile,
+.font-body-md,
+.font-body-sm,
+.font-label-bold {
+  font-family: var(--bio-font-sans);
+}
+
+.font-label-code {
+  font-family: var(--bio-font-mono);
+}

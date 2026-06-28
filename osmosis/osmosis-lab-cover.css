@@ -1,0 +1,124 @@
+/* Osmosis Lab — hero preview inside Interactive Tools hub card */
+
+.chem-tool-card--osmosis-cover {
+  border-color: rgba(0, 78, 159, 0.35);
+  box-shadow:
+    0 4px 20px rgba(0, 78, 159, 0.08),
+    inset 0 2px 0 rgba(255, 255, 255, 0.55);
+}
+
+.chem-tool-card--osmosis-cover:hover {
+  border-color: rgba(0, 102, 204, 0.55);
+  box-shadow:
+    0 16px 32px -8px rgba(0, 78, 159, 0.18),
+    0 0 0 1px rgba(0, 102, 204, 0.25);
+}
+
+.chem-tool-thumb--osmosis {
+  border: 2px solid rgba(0, 78, 159, 0.45);
+  background: linear-gradient(165deg, #e8f4fc 0%, #d7e8ff 42%, #eef6ff 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+html.dark-theme .chem-tool-thumb--osmosis {
+  background: linear-gradient(165deg, rgba(15, 40, 70, 0.9) 0%, rgba(20, 55, 95, 0.85) 100%);
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+.osmosis-cover-preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  flex: 1 1 auto;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.osmosis-cover-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.osmosis-cover-live-badge {
+  position: absolute;
+  top: clamp(10px, 1.5vw, 14px);
+  right: clamp(10px, 1.5vw, 14px);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-family: var(--bio-font-mono);
+  font-size: clamp(0.62rem, 1.1vh, 0.72rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #191c1e;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.osmosis-cover-live-badge::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #006d37;
+  box-shadow: 0 0 0 2px rgba(0, 109, 55, 0.25);
+  animation: osmosis-cover-ping 1.4s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .osmosis-cover-live-badge::before {
+    animation: none;
+  }
+}
+
+@keyframes osmosis-cover-ping {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.chem-tool-card--osmosis-cover .chem-tool-info {
+  gap: clamp(6px, 1vh, 10px);
+}
+
+.chem-tool-card--osmosis-cover .chem-tool-desc {
+  font-size: clamp(0.82rem, 1.5vh, 0.95rem);
+  line-height: 1.55;
+  text-align: center;
+  max-width: 36em;
+  margin-inline: auto;
+}
+
+.osmosis-cover-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+  font-size: clamp(0.8rem, 1.4vh, 0.9rem);
+  font-weight: 700;
+  color: #004e9f;
+  letter-spacing: 0.02em;
+}
+
+.chem-tool-card--osmosis-cover:hover .osmosis-cover-cta {
+  color: #0066cc;
+}

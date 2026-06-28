@@ -1,0 +1,125 @@
+/* Applied inside #pdf-export-wrapper only — explicit colors for html2canvas */
+#pdf-export-wrapper,
+#pdf-export-wrapper * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+#pdf-export-wrapper {
+  font-family: "Inter", Calibri, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #191c1e !important;
+  background: #ffffff !important;
+}
+
+#pdf-export-wrapper h1 {
+  font-family: Inter, Calibri, Arial, sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  color: #191c1e !important;
+  margin: 0 0 12px;
+}
+
+#pdf-export-wrapper h2 {
+  font-family: Inter, Calibri, Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #004e9f !important;
+  margin: 20px 0 10px;
+  page-break-after: avoid;
+}
+
+#pdf-export-wrapper h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #191c1e !important;
+  margin: 12px 0 8px;
+}
+
+#pdf-export-wrapper p,
+#pdf-export-wrapper li {
+  color: #414753 !important;
+  margin: 0 0 8px;
+}
+
+#pdf-export-wrapper strong {
+  color: #191c1e !important;
+  font-weight: 700;
+}
+
+#pdf-export-wrapper .text-primary,
+#pdf-export-wrapper .text-secondary {
+  color: #004e9f !important;
+}
+
+#pdf-export-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+#pdf-export-wrapper th,
+#pdf-export-wrapper td {
+  border: 1px solid #c1c6d5;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+  color: #191c1e !important;
+  background: #ffffff !important;
+}
+
+#pdf-export-wrapper th {
+  background: #e8f0fa !important;
+  font-weight: 600;
+  color: #004e9f !important;
+}
+
+#pdf-export-wrapper .glass-frost {
+  background: #f7f9fb !important;
+  border: 1px solid #c1c6d5 !important;
+}
+
+#pdf-export-wrapper .fig-box {
+  background: #ffffff !important;
+  border: 1px solid #c1c6d5 !important;
+  margin: 12px 0;
+  padding: 8px;
+  page-break-inside: avoid;
+}
+
+#pdf-export-wrapper .fig-box img {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  margin: 0 auto;
+}
+
+#pdf-export-wrapper .pdf-block,
+#pdf-export-wrapper .pdf-capture-host {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+#pdf-export-wrapper .pdf-block {
+  margin-bottom: 4px;
+}
+
+#pdf-export-wrapper .fig-caption {
+  font-size: 11px;
+  color: #414753 !important;
+  margin-top: 6px;
+}
+
+#pdf-export-wrapper section {
+  opacity: 1 !important;
+  transform: none !important;
+  margin-bottom: 20px;
+}
+
+#pdf-export-wrapper .material-symbols-outlined {
+  display: none !important;
+}

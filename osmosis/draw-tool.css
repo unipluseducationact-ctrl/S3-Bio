@@ -1,0 +1,264 @@
+/* BioUni+ overlay draw / highlight tool — fixed viewport canvas + FAB toolbar */
+
+#drawCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 90040;
+  pointer-events: none;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+#drawCanvas.is-active {
+  pointer-events: auto;
+}
+
+body.draw-mode-active {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.draw-tool-fab {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  z-index: 90085;
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #004e9f;
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(0, 78, 159, 0.35);
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.draw-tool-fab:hover {
+  background: #0066cc;
+  box-shadow: 0 6px 22px rgba(0, 78, 159, 0.42);
+}
+
+.draw-tool-fab:active {
+  transform: scale(0.96);
+}
+
+.draw-tool-fab.is-active {
+  background: #006d37;
+  box-shadow: 0 4px 18px rgba(0, 109, 55, 0.35);
+}
+
+.draw-tool-fab:focus-visible {
+  outline: 2px solid #004e9f;
+  outline-offset: 3px;
+}
+
+.draw-tool-fab svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.draw-tool-toolbar {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(max(16px, env(safe-area-inset-bottom, 0px)) + 64px);
+  z-index: 90086;
+  width: min(280px, calc(100vw - 32px));
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(193, 198, 213, 0.55);
+  background: rgba(255, 255, 255, 0.96);
+  color: #191c1e;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.draw-tool-toolbar[hidden] {
+  display: none;
+}
+
+.draw-tool-toolbar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.draw-tool-toolbar__title {
+  margin: 0;
+  font: 600 14px/1.2 system-ui, "Segoe UI", "Noto Sans TC", sans-serif;
+}
+
+.draw-tool-close {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: #414753;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.draw-tool-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.draw-tool-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.draw-tool-tools .draw-tool-btn {
+  flex: 1 1 calc(33.333% - 4px);
+  min-width: 0;
+  padding: 6px 4px;
+  font-size: 11px;
+}
+
+.draw-tool-btn {
+  flex: 1;
+  appearance: none;
+  border: 1.5px solid rgba(193, 198, 213, 0.7);
+  border-radius: 10px;
+  background: #f7f9fb;
+  color: #414753;
+  padding: 7px 8px;
+  font: 600 12px/1.2 system-ui, "Segoe UI", sans-serif;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.draw-tool-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.draw-tool-btn.is-active {
+  border-color: #004e9f;
+  background: #d7e3ff;
+  color: #004e9f;
+}
+
+.draw-tool-colors {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.color-dot {
+  appearance: none;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.color-dot.active {
+  border-color: #004e9f;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #004e9f;
+}
+
+.color-dot[data-color="#ffffff"],
+.color-dot[data-color="#facc15"],
+.color-dot[data-color="#fcd34d"] {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.draw-tool-width {
+  margin-bottom: 10px;
+}
+
+.draw-tool-width label {
+  display: block;
+  margin-bottom: 6px;
+  font: 500 12px/1.3 system-ui, "Segoe UI", sans-serif;
+  color: #414753;
+}
+
+.draw-tool-width input[type="range"],
+.draw-tool-opacity input[type="range"] {
+  width: 100%;
+  accent-color: #004e9f;
+}
+
+.draw-tool-opacity {
+  margin-bottom: 10px;
+}
+
+.draw-tool-opacity label {
+  display: block;
+  margin-bottom: 6px;
+  font: 500 12px/1.3 system-ui, "Segoe UI", "Noto Sans TC", sans-serif;
+  color: #414753;
+}
+
+#drawCanvas.draw-canvas--eraser {
+  cursor: cell;
+}
+
+.draw-tool-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.draw-tool-action {
+  flex: 1;
+  appearance: none;
+  border: 1.5px solid rgba(193, 198, 213, 0.7);
+  border-radius: 10px;
+  background: #fff;
+  color: #414753;
+  padding: 8px 10px;
+  font: 600 12px/1.2 system-ui, "Segoe UI", sans-serif;
+  cursor: pointer;
+}
+
+.draw-tool-action--danger {
+  color: #ba1a1a;
+  border-color: rgba(186, 26, 26, 0.35);
+}
+
+.draw-tool-action:hover {
+  background: #f2f4f6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draw-tool-fab,
+  .draw-tool-btn,
+  .draw-tool-action {
+    transition: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .draw-tool-colors {
+    grid-template-columns: repeat(8, 1fr);
+  }
+
+  .draw-tool-toolbar {
+    width: min(260px, calc(100vw - 24px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+  }
+}

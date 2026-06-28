@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Endosymbiotic Theory — Animation</title>
+  <link rel="stylesheet" href="./bio-typography.css">
+  <link rel="stylesheet" href="./endosymbiotic-animation.css">
+  <link rel="stylesheet" href="./embed.css">
+  <script src="./embed.js"></script>
+  <link rel="stylesheet" href="./draw-tool.css">
+  <script src="./draw-tool.js" defer></script>
+  <script src="./tool-back.js" data-position="top-right"></script>
+</head>
+<body>
+  <header class="page-header">
+    <h1>The Endosymbiotic Theory</h1>
+    <p>Animated walkthrough of the textbook diagram.</p>
+  </header>
+
+  <main class="stage-shell">
+    <div class="canvas-wrap" id="stage-root">
+      <div id="endo-stage" aria-label="Endosymbiotic theory animation"></div>
+    </div>
+
+    <div class="caption-bar" aria-live="polite">
+      <div class="caption-row">
+        <span class="caption-step" id="caption-step" hidden>1</span>
+        <p class="caption-text" id="caption-en">Loading…</p>
+      </div>
+      <p class="caption-text zh" id="caption-zh"></p>
+    </div>
+
+    <div class="controls">
+      <button type="button" class="primary" id="btn-play">▶ Play</button>
+      <button type="button" id="btn-prev">◀ Prev</button>
+      <button type="button" id="btn-next">Next ▶</button>
+      <button type="button" id="btn-restart">↺ Restart</button>
+      <div class="progress-wrap">
+        <input type="range" id="progress" min="0" max="6" step="1" value="0" aria-label="Animation step">
+        <span class="progress-label" id="progress-label">Step 1 / 7</span>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { EndosymbioticAnimation, STEPS } from "./js/endosymbioticAnimation.js";
+
+    const stage = document.getElementById("endo-stage");
+    const captionEn = document.getElementById("caption-en");
+    const captionZh = document.getElementById("caption-zh");
+    const captionStep = document.getElementById("caption-step");
+    const btnPlay = document.getElementById("btn-play");
+    const btnPrev = document.getElementById("btn-prev");
+    const btnNext = document.getElementById("btn-next");
+    const btnRestart = document.getElementById("btn-restart");
+    const progress = document.getElementById("progress");
+    const progressLabel = document.getElementById("progress-label");
+
+    progress.max = String(STEPS.length - 1);
+
+    function setCaption(step, index) {
+      captionEn.textContent = step.en;
+      captionZh.textContent = step.zh;
+      captionStep.hidden = step.badge == null;
+      if (step.badge != null) captionStep.textContent = String(step.badge);
+      progress.value = String(index);
+      progressLabel.textContent = `Step ${index + 1} / ${STEPS.length}`;
+    }
+
+    function setPlayLabel(playing) {
+      btnPlay.textContent = playing ? "⏸ Pause" : "▶ Play";
+    }
+
+    const anim = new EndosymbioticAnimation(stage, {
+      onStep: (step, index) => setCaption(step, index),
+      onComplete: () => setPlayLabel(false),
+    });
+
+    setPlayLabel(true);
+    setCaption(STEPS[0], 0);
+
+    btnPlay.addEventListener("click", () => {
+      anim.toggle();
+      setPlayLabel(anim.playing);
+    });
+    btnPrev.addEventListener("click", () => anim.prev());
+    btnNext.addEventListener("click", () => anim.next());
+    btnRestart.addEventListener("click", () => {
+      anim.restart();
+      setPlayLabel(true);
+      setCaption(STEPS[0], 0);
+    });
+    progress.addEventListener("input", () => {
+      anim.goToStep(Number(progress.value));
+      const engulf = STEPS[anim.stepIndex].id === "mito_engulf" || STEPS[anim.stepIndex].id === "chloro_engulf";
+      if (engulf) {
+        anim.play();
+        setPlayLabel(true);
+      } else {
+        anim.pause();
+        setPlayLabel(false);
+      }
+      setCaption(STEPS[anim.stepIndex], anim.stepIndex);
+    });
+  </script>
+</body>
+</html>
